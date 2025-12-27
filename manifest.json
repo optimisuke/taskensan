@@ -1,0 +1,15 @@
+{
+  "name": "Tasken-san",
+  "short_name": "Tasken",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#e9ffe0",
+  "theme_color": "#8edb2f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

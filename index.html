@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#8edb2f">
+  <link rel="manifest" href="manifest.json">
   <title>Tasken-san</title>
   <style>
     :root {
@@ -1095,101 +1096,11 @@
       return `${y}-${m}-${d}`;
     }
 
-    function setupPwa() {
-      const iconSvg = (size) => (
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 256 256">
-          <defs>
-            <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#8de96c"/>
-              <stop offset="1" stop-color="#54c9ff"/>
-            </linearGradient>
-            <radialGradient id="shine" cx="0.32" cy="0.28" r="0.5">
-              <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
-              <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-            </radialGradient>
-            <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#2fd67a"/>
-              <stop offset="1" stop-color="#1aa05a"/>
-            </linearGradient>
-          </defs>
-          <rect x="10" y="10" width="236" height="236" rx="72" fill="url(#skin)"/>
-          <rect x="10" y="10" width="236" height="236" rx="72" fill="url(#shine)"/>
-          <path d="M140 30c12-8 26-10 40-6-10 14-22 24-38 28-5-7-6-14-2-22z" fill="url(#leaf)"/>
-          <circle cx="96" cy="120" r="8" fill="#0f3a44"/>
-          <circle cx="160" cy="120" r="8" fill="#0f3a44"/>
-          <path d="M96 152c12 14 36 20 64 0" fill="none" stroke="#0f3a44" stroke-width="10" stroke-linecap="round"/>
-        </svg>`
-      );
-
-      const icon192 = `data:image/svg+xml;utf8,${encodeURIComponent(iconSvg(192))}`;
-      const icon512 = `data:image/svg+xml;utf8,${encodeURIComponent(iconSvg(512))}`;
-
-      const manifest = {
-        name: "Tasken-san",
-        short_name: "Tasken",
-        start_url: ".",
-        display: "standalone",
-        background_color: "#e9ffe0",
-        theme_color: "#8edb2f",
-        icons: [
-          { src: icon192, sizes: "192x192", type: "image/svg+xml" },
-          { src: icon512, sizes: "512x512", type: "image/svg+xml" }
-        ]
-      };
-
-      const manifestBlob = new Blob([JSON.stringify(manifest)], {
-        type: "application/manifest+json"
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch(() => {
+        // Service worker registration can fail in some file:// contexts.
       });
-      const manifestUrl = URL.createObjectURL(manifestBlob);
-      const link = document.createElement("link");
-      link.rel = "manifest";
-      link.href = manifestUrl;
-      document.head.appendChild(link);
-
-      if ("serviceWorker" in navigator) {
-        const swCode = `
-          const CACHE = "tasken-san-cache-v1";
-          self.addEventListener("install", (event) => {
-            event.waitUntil(
-              caches.open(CACHE).then((cache) => cache.addAll([self.location.href]))
-            );
-            self.skipWaiting();
-          });
-          self.addEventListener("activate", (event) => {
-            event.waitUntil(
-              caches.keys().then((keys) =>
-                Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
-              )
-            );
-            self.clients.claim();
-          });
-          self.addEventListener("fetch", (event) => {
-            if (event.request.method !== "GET") return;
-            event.respondWith(
-              caches.match(event.request).then((cached) => {
-                if (cached) return cached;
-                return fetch(event.request)
-                  .then((response) => {
-                    if (response && response.ok) {
-                      const copy = response.clone();
-                      caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-                    }
-                    return response;
-                  })
-                  .catch(() => caches.match(self.location.href));
-              })
-            );
-          });
-        `;
-        const blob = new Blob([swCode], { type: "text/javascript" });
-        const swUrl = URL.createObjectURL(blob);
-        navigator.serviceWorker.register(swUrl).catch(() => {
-          // Service worker registration can fail in some file:// contexts.
-        });
-      }
     }
-
-    setupPwa();
   </script>
 </body>
 </html>
