@@ -526,6 +526,16 @@
       touch-action: manipulation;
     }
 
+    .game-area::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), transparent 55%),
+        radial-gradient(circle at 70% 40%, rgba(255, 255, 255, 0.7), transparent 60%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
     .santa {
       position: absolute;
       left: 60px;
@@ -589,6 +599,12 @@
       gap: 8px;
     }
 
+    .game-btn {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+
     .empty-state {
       text-align: center;
       font-size: 18px;
@@ -603,6 +619,29 @@
       font-weight: 800;
       color: #2c9d66;
       min-height: 24px;
+    }
+
+    .game-result.celebrate {
+      animation: pop 0.6s ease-out, glow 0.9s ease-out;
+    }
+
+    .game-area.celebrate {
+      animation: sparkle 0.9s ease-out;
+    }
+
+    .game-area.celebrate::after {
+      animation: flash 0.9s ease-out;
+    }
+
+    .confetti {
+      position: absolute;
+      top: -20px;
+      width: 8px;
+      height: 14px;
+      border-radius: 2px;
+      opacity: 0;
+      animation: confetti-fall 1.2s ease-out forwards;
+      pointer-events: none;
     }
 
     @keyframes fadeUp {
@@ -622,6 +661,70 @@
       }
       50% {
         transform: translateY(-6px);
+      }
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.9);
+        opacity: 0.4;
+      }
+      60% {
+        transform: scale(1.08);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes glow {
+      0% {
+        text-shadow: 0 0 0 rgba(88, 198, 255, 0);
+      }
+      60% {
+        text-shadow: 0 0 14px rgba(88, 198, 255, 0.6);
+      }
+      100% {
+        text-shadow: 0 0 0 rgba(88, 198, 255, 0);
+      }
+    }
+
+    @keyframes sparkle {
+      0% {
+        box-shadow: inset 0 0 0 rgba(88, 198, 255, 0);
+      }
+      50% {
+        box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.35);
+      }
+      100% {
+        box-shadow: inset 0 0 0 rgba(88, 198, 255, 0);
+      }
+    }
+
+    @keyframes flash {
+      0% {
+        opacity: 0;
+      }
+      40% {
+        opacity: 0.7;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      20% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(340px) rotate(220deg);
+        opacity: 0;
       }
     }
 
@@ -750,7 +853,7 @@
         <div>プレゼント <span id="score">0</span></div>
       </div>
       <div id="gameArea" class="game-area"></div>
-      <button id="gameStartBtn" class="primary-btn">
+      <button id="gameStartBtn" class="primary-btn game-btn">
         <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="6 3 20 12 6 21 6 3" />
         </svg>
@@ -758,7 +861,7 @@
       </button>
       <div id="gameHelp" class="mini-note">10びょうで プレゼントを あつめよう</div>
       <div id="gameResult" class="game-result" aria-live="polite"></div>
-      <button id="exitGameBtn" class="secondary-btn">おしまい</button>
+      <button id="exitGameBtn" class="secondary-btn game-btn">おしまい</button>
     </div>
   </div>
 
@@ -1075,6 +1178,31 @@
       santaEl.style.top = `${y}px`;
     }
 
+    function triggerCelebrate() {
+      gameAreaEl.classList.remove("celebrate");
+      gameResultEl.classList.remove("celebrate");
+      void gameAreaEl.offsetWidth;
+      void gameResultEl.offsetWidth;
+      gameAreaEl.classList.add("celebrate");
+      gameResultEl.classList.add("celebrate");
+      spawnConfetti();
+    }
+
+    function spawnConfetti() {
+      const colors = ["#8edb2f", "#58c6ff", "#ffd166", "#ff8fa3", "#8bdcff"];
+      for (let i = 0; i < 18; i += 1) {
+        const piece = document.createElement("div");
+        piece.className = "confetti";
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDelay = `${Math.random() * 0.2}s`;
+        gameAreaEl.appendChild(piece);
+        piece.addEventListener("animationend", () => {
+          piece.remove();
+        }, { once: true });
+      }
+    }
+
     function startGame() {
       if (startGameBtn.disabled) return;
       openGame();
@@ -1087,7 +1215,10 @@
       santaEl.className = "santa";
       santaEl.innerHTML = "<img src=\"santa.svg\" alt=\"サンタ\" />";
       gameAreaEl.appendChild(santaEl);
+      gameAreaEl.classList.remove("celebrate");
+      gameResultEl.classList.remove("celebrate");
       gameStartBtn.hidden = false;
+      gameStartBtn.disabled = false;
       gameHelpEl.hidden = false;
       timeLeftEl.textContent = "10";
       scoreEl.textContent = "0";
@@ -1153,6 +1284,7 @@
         }
         gameResultEl.textContent = `スコア: ${currentScore}（さいこう: ${state.bestScore}）`;
         exitGameBtn.textContent = "もどる";
+        triggerCelebrate();
       } else {
         closeGame();
       }
