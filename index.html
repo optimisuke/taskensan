@@ -65,7 +65,7 @@
       background: transparent;
       display: grid;
       place-items: center;
-      box-shadow: 0 6px 14px rgba(29, 170, 166, 0.35);
+      box-shadow: 0 6px 14px rgba(88, 198, 255, 0.35);
     }
 
     .logo img {
@@ -231,6 +231,24 @@
       color: #fff;
       cursor: pointer;
       box-shadow: 0 10px 18px rgba(88, 198, 255, 0.35);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .primary-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
+      opacity: 0.7;
+      transform: translateX(-40%);
+      pointer-events: none;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.98);
+      box-shadow: 0 6px 12px rgba(88, 198, 255, 0.28);
     }
 
     .primary-btn:disabled {
@@ -238,11 +256,43 @@
       color: #9aa0a6;
       cursor: not-allowed;
       box-shadow: none;
+      transform: none;
     }
 
     .mini-note {
       font-size: 16px;
       text-align: center;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 16px;
+      letter-spacing: 0.2px;
+      border: 2px solid transparent;
+      background: #fff;
+      box-shadow: 0 6px 14px rgba(88, 198, 255, 0.18);
+    }
+
+    .stat-pill .label {
+      opacity: 0.7;
+      font-weight: 700;
+    }
+
+    .stat-pill.score {
+      background: linear-gradient(135deg, #eaffd8, #d8f3ff);
+      border-color: #8edb2f;
+      color: #2b7c46;
+    }
+
+    .stat-pill.plays {
+      background: linear-gradient(135deg, #f3f8ff, #e9f4ff);
+      border-color: #58c6ff;
+      color: #1c6aa8;
     }
 
     .settings-list {
@@ -360,10 +410,10 @@
       position: absolute;
       width: 64px;
       height: 64px;
-      background: #e63946;
+      background: linear-gradient(135deg, #7fe7a8, #5bc4ff);
       border-radius: 14px;
-      border: 4px solid #b22735;
-      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+      border: 4px solid #39b878;
+      box-shadow: 0 6px 0 rgba(39, 150, 95, 0.2);
       animation: floaty 1.8s ease-in-out infinite;
       touch-action: manipulation;
     }
@@ -372,7 +422,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, transparent 42%, #ffd166 42%, #ffd166 58%, transparent 58%);
+      background: linear-gradient(90deg, transparent 42%, #ffffff 42%, #ffffff 58%, transparent 58%);
       border-radius: 10px;
     }
 
@@ -381,11 +431,11 @@
       position: absolute;
       width: 22px;
       height: 22px;
-      background: #ffd166;
+      background: #ffffff;
       border-radius: 50%;
       top: -14px;
       left: 18px;
-      box-shadow: 0 0 0 3px #e0aa3d;
+      box-shadow: 0 0 0 3px #d1f2ff;
     }
 
     .secondary-btn {
@@ -410,7 +460,7 @@
       text-align: center;
       font-size: 20px;
       font-weight: 800;
-      color: #b22735;
+      color: #2c9d66;
       min-height: 24px;
     }
 
@@ -486,8 +536,8 @@
                 <button id="startGameBtn" class="primary-btn" disabled>🎮 ゲームをはじめる</button>
                 <div id="rewardNote" class="mini-note">10びょうで プレゼントを あつめよう</div>
               </div>
-              <div id="bestScore" class="mini-note">さいこう: 0</div>
-              <div id="playsLeft" class="mini-note">きょうのこり: 3かい</div>
+              <div id="bestScore" class="mini-note stat-pill score"><span class="label">さいこう</span><span class="value">0</span></div>
+              <div id="playsLeft" class="mini-note stat-pill plays"><span class="label">きょうのこり</span><span class="value">3かい</span></div>
               <div class="mini-note">きょうのタスクを ぜんぶ できたら あそべるよ</div>
             </div>
           </div>
@@ -696,8 +746,8 @@
       const maxPlays = 3;
       const remainingPlays = Math.max(0, maxPlays - playedToday);
       const canPlayMore = remainingPlays > 0;
-      bestScoreEl.textContent = `さいこう: ${state.bestScore}`;
-      playsLeftEl.textContent = `きょうのこり: ${remainingPlays}かい`;
+      bestScoreEl.querySelector(".value").textContent = state.bestScore;
+      playsLeftEl.querySelector(".value").textContent = `${remainingPlays}かい`;
 
       if (allDone && canPlayMore) {
         rewardMessageEl.textContent = "すごい！ ごほうび かいきん！";
@@ -866,15 +916,27 @@
 
     function setupPwa() {
       const iconSvg = (size) => (
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 512 512">
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 256 256">
           <defs>
-            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1daaa6"/>
-              <stop offset="100%" stop-color="#6bdad0"/>
+            <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#8de96c"/>
+              <stop offset="1" stop-color="#54c9ff"/>
+            </linearGradient>
+            <radialGradient id="shine" cx="0.32" cy="0.28" r="0.5">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="0.9"/>
+              <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="leaf" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2fd67a"/>
+              <stop offset="1" stop-color="#1aa05a"/>
             </linearGradient>
           </defs>
-          <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-          <text x="50%" y="54%" text-anchor="middle" font-size="180" fill="#ffffff" font-family="Trebuchet MS, sans-serif" font-weight="800">TS</text>
+          <rect x="10" y="10" width="236" height="236" rx="72" fill="url(#skin)"/>
+          <rect x="10" y="10" width="236" height="236" rx="72" fill="url(#shine)"/>
+          <path d="M140 30c12-8 26-10 40-6-10 14-22 24-38 28-5-7-6-14-2-22z" fill="url(#leaf)"/>
+          <circle cx="96" cy="120" r="8" fill="#0f3a44"/>
+          <circle cx="160" cy="120" r="8" fill="#0f3a44"/>
+          <path d="M96 152c12 14 36 20 64 0" fill="none" stroke="#0f3a44" stroke-width="10" stroke-linecap="round"/>
         </svg>`
       );
 
