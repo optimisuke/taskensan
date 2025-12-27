@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f26b3a">
+  <title>Tasken-san</title>
+  <style>
+    :root {
+      --bg-a: #f8e7a1;
+      --bg-b: #ffd3a5;
+      --bg-c: #f26b3a;
+      --ink: #2a2a2a;
+      --panel: #fff7e6;
+      --panel-strong: #fff1c2;
+      --accent: #1daaa6;
+      --accent-2: #f26b3a;
+      --good: #2fbf71;
+      --warn: #f4a261;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 20% 20%, #fff8d9 0, #fff8d9 25%, transparent 26%),
+        radial-gradient(circle at 80% 20%, #ffe8d0 0, #ffe8d0 18%, transparent 19%),
+        linear-gradient(135deg, var(--bg-a), var(--bg-b));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 24px 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 16px;
+      border-radius: 24px;
+      background: linear-gradient(120deg, #fff4d4, #ffe0c2);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), #6bdad0);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 6px 14px rgba(29, 170, 166, 0.35);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav button {
+      border: none;
+      border-radius: 18px;
+      padding: 12px 18px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #fff;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+    }
+
+    .nav button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    main {
+      margin-top: 24px;
+    }
+
+    .view {
+      display: none;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 26px;
+      padding: 20px 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 22px;
+    }
+
+    .task-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .task-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      background: #fff;
+      border-radius: 18px;
+      border: 3px solid transparent;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, border 0.2s ease;
+    }
+
+    .task-card.completed {
+      border-color: var(--good);
+      background: #e7f8ef;
+    }
+
+    .task-card:active {
+      transform: scale(0.98);
+    }
+
+    .task-check {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: #f1f1f1;
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      color: #fff;
+    }
+
+    .task-card.completed .task-check {
+      background: var(--good);
+      color: #fff;
+    }
+
+    .progress {
+      margin-top: 18px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 18px;
+      border-radius: 999px;
+      background: #f1e1c1;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #59cbd1);
+      transition: width 0.4s ease;
+    }
+
+    .progress-text {
+      margin-top: 8px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .reward-box {
+      display: grid;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .reward-status {
+      background: var(--panel-strong);
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+      display: grid;
+      gap: 12px;
+    }
+
+    .reward-status .message {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .primary-btn {
+      border: none;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-size: 20px;
+      font-weight: 800;
+      background: var(--accent-2);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(242, 107, 58, 0.35);
+    }
+
+    .primary-btn:disabled {
+      background: #d7a78e;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .mini-note {
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .settings-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 10px 12px;
+    }
+
+    .settings-item input[type="text"] {
+      font-size: 18px;
+      padding: 6px 10px;
+      border-radius: 12px;
+      border: 2px solid #f0d9b5;
+      width: 100%;
+    }
+
+    .settings-item input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      accent-color: var(--accent);
+    }
+
+    .icon-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 16px;
+      background: #ffd6c1;
+      cursor: pointer;
+    }
+
+    .add-task {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+
+    .add-task input {
+      font-size: 18px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 2px solid #f0d9b5;
+    }
+
+    .note {
+      margin-top: 16px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(35, 31, 32, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 10;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .game-card {
+      background: #fff;
+      border-radius: 28px;
+      padding: 18px 20px 20px;
+      width: min(700px, 90vw);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 12px;
+    }
+
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .game-area {
+      position: relative;
+      height: 360px;
+      border-radius: 24px;
+      background: linear-gradient(160deg, #c8f1f0, #fef3d8);
+      overflow: hidden;
+      border: 4px dashed #f2b28a;
+    }
+
+    .santa {
+      position: absolute;
+      left: 18px;
+      bottom: 12px;
+      font-size: 52px;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.15));
+    }
+
+    .present {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      background: #e63946;
+      border-radius: 14px;
+      border: 4px solid #b22735;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.1);
+      animation: floaty 1.8s ease-in-out infinite;
+      touch-action: manipulation;
+    }
+
+    .present::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 42%, #ffd166 42%, #ffd166 58%, transparent 58%);
+      border-radius: 10px;
+    }
+
+    .present::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: #ffd166;
+      border-radius: 50%;
+      top: -14px;
+      left: 18px;
+      box-shadow: 0 0 0 3px #e0aa3d;
+    }
+
+    .secondary-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #ffd3a5;
+      cursor: pointer;
+    }
+
+    .empty-state {
+      text-align: center;
+      font-size: 18px;
+      padding: 16px;
+      background: #fff;
+      border-radius: 16px;
+    }
+
+    .game-result {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      color: #b22735;
+      min-height: 24px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes floaty {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .game-area {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">TS</div>
+        <div>
+          <h1>Tasken-san</h1>
+          <div>きょうも がんばろう！</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="active" data-view="home">きょう</button>
+        <button data-view="settings">せってい</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="view-home" class="view active">
+        <div class="layout">
+          <div class="panel">
+            <h2>きょうのタスク</h2>
+            <div id="taskList" class="task-list"></div>
+            <div id="emptyTasks" class="empty-state" hidden>タスクがありません。せっていで ついかしてね。</div>
+            <div class="progress">
+              <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+              </div>
+              <div id="progressText" class="progress-text">0 / 0</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>ごほうび</h2>
+            <div class="reward-box">
+              <div class="reward-status">
+                <div id="rewardMessage" class="message">タスクを ぜんぶ おわらせよう！</div>
+                <button id="startGameBtn" class="primary-btn" disabled>ゲームをはじめる</button>
+                <div id="rewardNote" class="mini-note">10びょうで プレゼントを あつめよう</div>
+              </div>
+              <div id="bestScore" class="mini-note">さいこう: 0</div>
+              <div class="mini-note">きょうのタスクを ぜんぶ できたら あそべるよ</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="panel">
+          <h2>タスクのせってい</h2>
+          <div id="settingsList" class="settings-list"></div>
+          <div class="add-task">
+            <input id="newTaskName" type="text" placeholder="あたらしいタスク">
+            <button id="addTaskBtn" class="secondary-btn">ついか</button>
+          </div>
+          <div class="note">※ タスクは まいにち リセットされます</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="gameOverlay" class="overlay">
+    <div class="game-card">
+      <div class="game-header">
+        <div>のこり <span id="timeLeft">10</span> びょう</div>
+        <div>プレゼント <span id="score">0</span></div>
+      </div>
+      <div id="gameArea" class="game-area"></div>
+      <div id="gameResult" class="game-result" aria-live="polite"></div>
+      <button id="exitGameBtn" class="secondary-btn">おしまい</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "tasken-san-v1";
+
+    const defaultTasks = [
+      { id: "tidy", name: "かたづけ", enabled: true },
+      { id: "homework", name: "しゅくだい", enabled: true },
+      { id: "help", name: "おてつだい", enabled: true }
+    ];
+
+    const state = loadState();
+    ensureToday(state);
+    saveState(state);
+
+    const taskListEl = document.getElementById("taskList");
+    const settingsListEl = document.getElementById("settingsList");
+    const progressFillEl = document.getElementById("progressFill");
+    const progressTextEl = document.getElementById("progressText");
+    const startGameBtn = document.getElementById("startGameBtn");
+    const rewardMessageEl = document.getElementById("rewardMessage");
+    const rewardNoteEl = document.getElementById("rewardNote");
+    const bestScoreEl = document.getElementById("bestScore");
+    const emptyTasksEl = document.getElementById("emptyTasks");
+    const overlayEl = document.getElementById("gameOverlay");
+    const gameAreaEl = document.getElementById("gameArea");
+    const timeLeftEl = document.getElementById("timeLeft");
+    const scoreEl = document.getElementById("score");
+    const gameResultEl = document.getElementById("gameResult");
+    const exitGameBtn = document.getElementById("exitGameBtn");
+    const newTaskInput = document.getElementById("newTaskName");
+
+    let gameTimer = null;
+    let spawnTimer = null;
+    let currentScore = 0;
+    let gameFinished = false;
+
+    setupNavigation();
+    render();
+
+    document.getElementById("addTaskBtn").addEventListener("click", () => {
+      const name = newTaskInput.value.trim();
+      if (!name) return;
+      state.tasks.push({ id: crypto.randomUUID(), name, enabled: true });
+      newTaskInput.value = "";
+      saveState(state);
+      render();
+    });
+
+    startGameBtn.addEventListener("click", () => {
+      startGame();
+    });
+
+    exitGameBtn.addEventListener("click", () => {
+      if (gameFinished) {
+        closeGame();
+      } else {
+        endGame(true);
+      }
+    });
+
+    function setupNavigation() {
+      document.querySelectorAll(".nav button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".nav button").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const view = btn.dataset.view;
+          document.querySelectorAll(".view").forEach((section) => {
+            section.classList.toggle("active", section.id === `view-${view}`);
+          });
+        });
+      });
+    }
+
+    function render() {
+      ensureToday(state);
+      renderTasks();
+      renderSettings();
+      updateProgress();
+      updateReward();
+    }
+
+    function renderTasks() {
+      taskListEl.innerHTML = "";
+      const activeTasks = state.tasks.filter((task) => task.enabled);
+      emptyTasksEl.hidden = activeTasks.length !== 0;
+
+      activeTasks.forEach((task) => {
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "task-card";
+        card.setAttribute("aria-pressed", Boolean(state.completed[task.id]));
+        card.innerHTML = `<span>${task.name}</span><span class="task-check">✓</span>`;
+        if (state.completed[task.id]) {
+          card.classList.add("completed");
+        }
+        card.addEventListener("click", () => {
+          state.completed[task.id] = !state.completed[task.id];
+          saveState(state);
+          render();
+        });
+        taskListEl.appendChild(card);
+      });
+    }
+
+    function renderSettings() {
+      settingsListEl.innerHTML = "";
+      state.tasks.forEach((task) => {
+        const row = document.createElement("div");
+        row.className = "settings-item";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = task.enabled;
+        checkbox.addEventListener("change", () => {
+          task.enabled = checkbox.checked;
+          if (!task.enabled) {
+            delete state.completed[task.id];
+          }
+          saveState(state);
+          render();
+        });
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = task.name;
+        input.addEventListener("change", () => {
+          const value = input.value.trim();
+          task.name = value || task.name;
+          input.value = task.name;
+          saveState(state);
+          render();
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "icon-btn";
+        delBtn.textContent = "けす";
+        delBtn.addEventListener("click", () => {
+          state.tasks = state.tasks.filter((t) => t.id !== task.id);
+          delete state.completed[task.id];
+          saveState(state);
+          render();
+        });
+
+        row.appendChild(checkbox);
+        row.appendChild(input);
+        row.appendChild(delBtn);
+        settingsListEl.appendChild(row);
+      });
+    }
+
+    function updateProgress() {
+      const activeTasks = state.tasks.filter((task) => task.enabled);
+      const total = activeTasks.length;
+      const done = activeTasks.filter((task) => state.completed[task.id]).length;
+      const ratio = total ? Math.round((done / total) * 100) : 0;
+      progressFillEl.style.width = `${ratio}%`;
+      progressTextEl.textContent = `${done} / ${total}`;
+    }
+
+    function updateReward() {
+      const activeTasks = state.tasks.filter((task) => task.enabled);
+      const total = activeTasks.length;
+      const done = activeTasks.filter((task) => state.completed[task.id]).length;
+      const allDone = total > 0 && done === total;
+      const today = getToday();
+      const playedToday = state.gamePlayedDay === today;
+      bestScoreEl.textContent = `さいこう: ${state.bestScore}`;
+
+      if (allDone && !playedToday) {
+        rewardMessageEl.textContent = "すごい！ ごほうび かいきん！";
+        startGameBtn.disabled = false;
+        rewardNoteEl.textContent = "10びょうで プレゼントを あつめよう";
+        return;
+      }
+
+      if (playedToday) {
+        rewardMessageEl.textContent = "きょうの ごほうびは おしまい";
+        startGameBtn.disabled = true;
+        rewardNoteEl.textContent = "また あした がんばろう";
+        return;
+      }
+
+      if (total === 0) {
+        rewardMessageEl.textContent = "せっていで タスクを ついかしてね";
+        startGameBtn.disabled = true;
+        rewardNoteEl.textContent = "";
+        return;
+      }
+
+      rewardMessageEl.textContent = "タスクを ぜんぶ おわらせよう！";
+      startGameBtn.disabled = true;
+      rewardNoteEl.textContent = "";
+    }
+
+    function startGame() {
+      if (startGameBtn.disabled) return;
+      overlayEl.classList.add("active");
+      gameAreaEl.innerHTML = "<div class=\"santa\">🎅</div>";
+      let timeLeft = 10;
+      currentScore = 0;
+      gameFinished = false;
+      timeLeftEl.textContent = timeLeft;
+      scoreEl.textContent = currentScore;
+      gameResultEl.textContent = "";
+      exitGameBtn.textContent = "おしまい";
+
+      const spawnPresent = () => {
+        const present = document.createElement("div");
+        present.className = "present";
+        const areaRect = gameAreaEl.getBoundingClientRect();
+        const size = 70;
+        const maxX = areaRect.width - size;
+        const maxY = areaRect.height - size;
+        present.style.left = `${Math.max(0, Math.random() * maxX)}px`;
+        present.style.top = `${Math.max(0, Math.random() * maxY)}px`;
+        present.addEventListener("pointerdown", () => {
+          if (gameFinished) return;
+          present.remove();
+          currentScore += 1;
+          scoreEl.textContent = currentScore;
+          spawnPresent();
+        }, { once: true });
+        gameAreaEl.appendChild(present);
+      };
+
+      spawnPresent();
+      spawnTimer = setInterval(spawnPresent, 900);
+
+      gameTimer = setInterval(() => {
+        timeLeft -= 1;
+        timeLeftEl.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          endGame(false);
+        }
+      }, 1000);
+    }
+
+    function endGame(byExit) {
+      clearInterval(gameTimer);
+      clearInterval(spawnTimer);
+      gameTimer = null;
+      spawnTimer = null;
+      if (!byExit) {
+        state.gamePlayedDay = getToday();
+        gameFinished = true;
+        if (currentScore > state.bestScore) {
+          state.bestScore = currentScore;
+        }
+        gameResultEl.textContent = `スコア: ${currentScore}（さいこう: ${state.bestScore}）`;
+        exitGameBtn.textContent = "もどる";
+      } else {
+        closeGame();
+      }
+      saveState(state);
+      render();
+    }
+
+    function closeGame() {
+      overlayEl.classList.remove("active");
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return {
+          tasks: defaultTasks,
+          completed: {},
+          day: getToday(),
+          gamePlayedDay: "",
+          bestScore: 0
+        };
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        return {
+          tasks: Array.isArray(parsed.tasks) && parsed.tasks.length ? parsed.tasks : defaultTasks,
+          completed: parsed.completed || {},
+          day: parsed.day || getToday(),
+          gamePlayedDay: parsed.gamePlayedDay || "",
+          bestScore: Number.isFinite(parsed.bestScore) ? parsed.bestScore : 0
+        };
+      } catch (err) {
+        return {
+          tasks: defaultTasks,
+          completed: {},
+          day: getToday(),
+          gamePlayedDay: "",
+          bestScore: 0
+        };
+      }
+    }
+
+    function saveState(nextState) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+    }
+
+    function ensureToday(nextState) {
+      const today = getToday();
+      if (nextState.day !== today) {
+        nextState.day = today;
+        nextState.completed = {};
+        nextState.gamePlayedDay = "";
+      }
+    }
+
+    function getToday() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function setupPwa() {
+      const iconSvg = (size) => (
+        `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 512 512">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#1daaa6"/>
+              <stop offset="100%" stop-color="#6bdad0"/>
+            </linearGradient>
+          </defs>
+          <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+          <text x="50%" y="54%" text-anchor="middle" font-size="180" fill="#ffffff" font-family="Trebuchet MS, sans-serif" font-weight="800">TS</text>
+        </svg>`
+      );
+
+      const icon192 = `data:image/svg+xml;utf8,${encodeURIComponent(iconSvg(192))}`;
+      const icon512 = `data:image/svg+xml;utf8,${encodeURIComponent(iconSvg(512))}`;
+
+      const manifest = {
+        name: "Tasken-san",
+        short_name: "Tasken",
+        start_url: ".",
+        display: "standalone",
+        background_color: "#fff1c2",
+        theme_color: "#f26b3a",
+        icons: [
+          { src: icon192, sizes: "192x192", type: "image/svg+xml" },
+          { src: icon512, sizes: "512x512", type: "image/svg+xml" }
+        ]
+      };
+
+      const manifestBlob = new Blob([JSON.stringify(manifest)], {
+        type: "application/manifest+json"
+      });
+      const manifestUrl = URL.createObjectURL(manifestBlob);
+      const link = document.createElement("link");
+      link.rel = "manifest";
+      link.href = manifestUrl;
+      document.head.appendChild(link);
+
+      if ("serviceWorker" in navigator) {
+        const swCode = `
+          const CACHE = "tasken-san-cache-v1";
+          self.addEventListener("install", (event) => {
+            event.waitUntil(
+              caches.open(CACHE).then((cache) => cache.addAll([self.location.href]))
+            );
+            self.skipWaiting();
+          });
+          self.addEventListener("activate", (event) => {
+            event.waitUntil(
+              caches.keys().then((keys) =>
+                Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
+              )
+            );
+            self.clients.claim();
+          });
+          self.addEventListener("fetch", (event) => {
+            if (event.request.method !== "GET") return;
+            event.respondWith(
+              caches.match(event.request).then((cached) => {
+                if (cached) return cached;
+                return fetch(event.request)
+                  .then((response) => {
+                    if (response && response.ok) {
+                      const copy = response.clone();
+                      caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+                    }
+                    return response;
+                  })
+                  .catch(() => caches.match(self.location.href));
+              })
+            );
+          });
+        `;
+        const blob = new Blob([swCode], { type: "text/javascript" });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(() => {
+          // Service worker registration can fail in some file:// contexts.
+        });
+      }
+    }
+
+    setupPwa();
+  </script>
+</body>
+</html>
