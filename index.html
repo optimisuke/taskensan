@@ -93,6 +93,9 @@
       background: #fff;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .nav button.active {
@@ -131,6 +134,24 @@
       font-size: 22px;
     }
 
+    .with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .icon-lg {
+      width: 22px;
+      height: 22px;
+    }
+
     .task-list {
       display: grid;
       gap: 12px;
@@ -149,6 +170,27 @@
       font-weight: 700;
       cursor: pointer;
       transition: transform 0.15s ease, border 0.2s ease;
+    }
+
+    .task-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .task-icon {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #1f6f8b;
+    }
+
+    .task-icon svg {
+      width: 24px;
+      height: 24px;
+      display: block;
     }
 
     .task-card.completed {
@@ -234,6 +276,9 @@
       position: relative;
       overflow: hidden;
       transition: transform 0.15s ease, box-shadow 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .primary-btn::after {
@@ -302,12 +347,17 @@
 
     .settings-item {
       display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: #fff;
       border-radius: 16px;
       padding: 10px 12px;
+    }
+
+    .settings-main {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
     }
 
     .settings-item input[type="text"] {
@@ -318,12 +368,6 @@
       width: 100%;
     }
 
-    .settings-item input[type="checkbox"] {
-      width: 24px;
-      height: 24px;
-      accent-color: var(--accent);
-    }
-
     .icon-btn {
       border: none;
       border-radius: 12px;
@@ -331,6 +375,35 @@
       font-size: 16px;
       background: #d7f4ff;
       cursor: pointer;
+    }
+
+    .icon-picker {
+      display: grid;
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .icon-choice {
+      border: 2px solid transparent;
+      background: #f5fbff;
+      border-radius: 12px;
+      padding: 6px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: #1c6aa8;
+    }
+
+    .icon-choice.active {
+      border-color: var(--accent);
+      background: #eaffd8;
+      color: #2b7c46;
+    }
+
+    .icon-choice svg {
+      width: 20px;
+      height: 20px;
+      display: block;
     }
 
     .add-task {
@@ -399,11 +472,18 @@
       position: absolute;
       left: 60px;
       top: 70%;
-      font-size: 52px;
+      width: 64px;
+      height: 64px;
       transform: translate(-50%, -50%);
       transition: left 0.2s ease, top 0.2s ease;
       pointer-events: none;
       filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.15));
+    }
+
+    .santa img {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
     .present {
@@ -446,6 +526,9 @@
       font-weight: 700;
       background: #c9f3ff;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .empty-state {
@@ -508,8 +591,22 @@
         </div>
       </div>
       <nav class="nav">
-        <button class="active" data-view="home">🗓️ きょう</button>
-        <button data-view="settings">⚙️ せってい</button>
+        <button class="active" data-view="home">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
+          </svg>
+          きょう
+        </button>
+        <button data-view="settings">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          せってい
+        </button>
       </nav>
     </header>
 
@@ -517,7 +614,15 @@
       <section id="view-home" class="view active">
         <div class="layout">
           <div class="panel">
-            <h2>📋 きょうのタスク</h2>
+            <h2 class="with-icon">
+              <svg class="icon icon-lg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 5H3" />
+                <path d="M16 12H3" />
+                <path d="M11 19H3" />
+                <path d="m15 18 2 2 4-4" />
+              </svg>
+              きょうのタスク
+            </h2>
             <div id="taskList" class="task-list"></div>
             <div id="emptyTasks" class="empty-state" hidden>タスクがありません。せっていで ついかしてね。</div>
             <div class="progress">
@@ -529,11 +634,28 @@
           </div>
 
           <div class="panel">
-            <h2>🎁 ごほうび</h2>
+            <h2 class="with-icon">
+              <svg class="icon icon-lg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="8" width="18" height="4" rx="1" />
+                <path d="M12 8v13" />
+                <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+                <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
+              </svg>
+              ごほうび
+            </h2>
             <div class="reward-box">
               <div class="reward-status">
                 <div id="rewardMessage" class="message">タスクを ぜんぶ おわらせよう！</div>
-                <button id="startGameBtn" class="primary-btn" disabled>🎮 ゲームをはじめる</button>
+                <button id="startGameBtn" class="primary-btn" disabled>
+                  <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" x2="10" y1="11" y2="11" />
+                    <line x1="8" x2="8" y1="9" y2="13" />
+                    <line x1="15" x2="15.01" y1="12" y2="12" />
+                    <line x1="18" x2="18.01" y1="10" y2="10" />
+                    <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />
+                  </svg>
+                  ゲームをはじめる
+                </button>
                 <div id="rewardNote" class="mini-note">10びょうで プレゼントを あつめよう</div>
               </div>
               <div id="bestScore" class="mini-note stat-pill score"><span class="label">さいこう</span><span class="value">0</span></div>
@@ -546,11 +668,22 @@
 
       <section id="view-settings" class="view">
         <div class="panel">
-          <h2>🛠️ タスクのせってい</h2>
+          <h2 class="with-icon">
+            <svg class="icon icon-lg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" />
+            </svg>
+            タスクのせってい
+          </h2>
           <div id="settingsList" class="settings-list"></div>
           <div class="add-task">
             <input id="newTaskName" type="text" placeholder="あたらしいタスク">
-            <button id="addTaskBtn" class="secondary-btn">➕ ついか</button>
+            <button id="addTaskBtn" class="secondary-btn">
+              <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14" />
+                <path d="M12 5v14" />
+              </svg>
+              ついか
+            </button>
           </div>
           <div class="note">※ タスクは まいにち リセットされます</div>
         </div>
@@ -574,10 +707,39 @@
     const STORAGE_KEY = "tasken-san-v1";
 
     const defaultTasks = [
-      { id: "tidy", name: "かたづけ", enabled: true },
-      { id: "homework", name: "しゅくだい", enabled: true },
-      { id: "help", name: "おてつだい", enabled: true }
+      { id: "tidy", name: "かたづけ", icon: "home" },
+      { id: "homework", name: "しゅくだい", icon: "book" },
+      { id: "help", name: "おてつだい", icon: "hand-heart" }
     ];
+
+    const iconSvgs = {
+      calendar: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>`,
+      list: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5H3"/><path d="M16 12H3"/><path d="M11 19H3"/><path d="m15 18 2 2 4-4"/></svg>`,
+      book: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+      home: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg>`,
+      "hand-heart": `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 14h1.5a2.5 2.5 0 0 0 0-5H12"/><path d="M12 9h-.5a2.5 2.5 0 0 0 0 5H13"/><path d="M8 17.5a4 4 0 0 0 4 4H18a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/><path d="M7 12H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h7"/><path d="M16.5 3.5a2.5 2.5 0 0 0-3.5 0L12 4.5l-1-1a2.5 2.5 0 0 0-3.5 3.5l4.5 4.5 4.5-4.5a2.5 2.5 0 0 0 0-3.5z"/></svg>`,
+      sparkles: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>`,
+      sun: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+      star: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.3 2.6 13.5 8l5.8.5-4.4 3.7L16.8 18l-5.5-3.4L5.8 18l1.9-5.8L3.3 8.5 9.1 8z"/></svg>`,
+      gift: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>`,
+      gamepad: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>`
+    };
+
+    const iconOptions = [
+      { id: "list", label: "チェック" },
+      { id: "book", label: "ほん" },
+      { id: "home", label: "おうち" },
+      { id: "hand-heart", label: "おてつだい" },
+      { id: "calendar", label: "きょう" },
+      { id: "gift", label: "ごほうび" },
+      { id: "gamepad", label: "ゲーム" },
+      { id: "star", label: "ほし" },
+      { id: "sun", label: "たいよう" }
+    ];
+
+    function getIconSvg(iconId) {
+      return iconSvgs[iconId] || iconSvgs.list;
+    }
 
     const state = loadState();
     ensureToday(state);
@@ -613,7 +775,7 @@
     document.getElementById("addTaskBtn").addEventListener("click", () => {
       const name = newTaskInput.value.trim();
       if (!name) return;
-      state.tasks.push({ id: crypto.randomUUID(), name, enabled: true });
+      state.tasks.push({ id: crypto.randomUUID(), name, icon: "list" });
       newTaskInput.value = "";
       saveState(state);
       render();
@@ -660,7 +822,7 @@
 
     function renderTasks() {
       taskListEl.innerHTML = "";
-      const activeTasks = state.tasks.filter((task) => task.enabled);
+      const activeTasks = state.tasks;
       emptyTasksEl.hidden = activeTasks.length !== 0;
 
       activeTasks.forEach((task) => {
@@ -668,7 +830,7 @@
         card.type = "button";
         card.className = "task-card";
         card.setAttribute("aria-pressed", Boolean(state.completed[task.id]));
-        card.innerHTML = `<span>${task.name}</span><span class="task-check">✓</span>`;
+        card.innerHTML = `<span class="task-main"><span class="task-icon">${getIconSvg(task.icon)}</span><span>${task.name}</span></span><span class="task-check">✓</span>`;
         if (state.completed[task.id]) {
           card.classList.add("completed");
         }
@@ -687,17 +849,8 @@
         const row = document.createElement("div");
         row.className = "settings-item";
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = task.enabled;
-        checkbox.addEventListener("change", () => {
-          task.enabled = checkbox.checked;
-          if (!task.enabled) {
-            delete state.completed[task.id];
-          }
-          saveState(state);
-          render();
-        });
+        const main = document.createElement("div");
+        main.className = "settings-main";
 
         const input = document.createElement("input");
         input.type = "text";
@@ -720,15 +873,37 @@
           render();
         });
 
-        row.appendChild(checkbox);
-        row.appendChild(input);
-        row.appendChild(delBtn);
+        main.appendChild(input);
+        main.appendChild(delBtn);
+
+        const picker = document.createElement("div");
+        picker.className = "icon-picker";
+        iconOptions.forEach((option) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "icon-choice";
+          btn.innerHTML = getIconSvg(option.id);
+          btn.title = option.label;
+          btn.setAttribute("aria-pressed", option.id === task.icon);
+          if (option.id === task.icon) {
+            btn.classList.add("active");
+          }
+          btn.addEventListener("click", () => {
+            task.icon = option.id;
+            saveState(state);
+            render();
+          });
+          picker.appendChild(btn);
+        });
+
+        row.appendChild(main);
+        row.appendChild(picker);
         settingsListEl.appendChild(row);
       });
     }
 
     function updateProgress() {
-      const activeTasks = state.tasks.filter((task) => task.enabled);
+      const activeTasks = state.tasks;
       const total = activeTasks.length;
       const done = activeTasks.filter((task) => state.completed[task.id]).length;
       const ratio = total ? Math.round((done / total) * 100) : 0;
@@ -737,7 +912,7 @@
     }
 
     function updateReward() {
-      const activeTasks = state.tasks.filter((task) => task.enabled);
+      const activeTasks = state.tasks;
       const total = activeTasks.length;
       const done = activeTasks.filter((task) => state.completed[task.id]).length;
       const allDone = total > 0 && done === total;
@@ -791,7 +966,7 @@
       gameAreaEl.innerHTML = "";
       santaEl = document.createElement("div");
       santaEl.className = "santa";
-      santaEl.textContent = "🎅";
+      santaEl.innerHTML = "<img src=\"santa.svg\" alt=\"サンタ\" />";
       gameAreaEl.appendChild(santaEl);
       let timeLeft = 10;
       currentScore = 0;
@@ -862,7 +1037,7 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
         return {
-          tasks: defaultTasks,
+          tasks: defaultTasks.map((task) => ({ ...task, icon: task.icon || "list" })),
           completed: {},
           day: getToday(),
           gamePlaysDay: "",
@@ -872,8 +1047,14 @@
       }
       try {
         const parsed = JSON.parse(raw);
+        const tasks = Array.isArray(parsed.tasks) && parsed.tasks.length ? parsed.tasks : defaultTasks;
+        const normalizedTasks = tasks.map((task) => ({
+          id: task.id,
+          name: task.name,
+          icon: task.icon || "list"
+        }));
         return {
-          tasks: Array.isArray(parsed.tasks) && parsed.tasks.length ? parsed.tasks : defaultTasks,
+          tasks: normalizedTasks,
           completed: parsed.completed || {},
           day: parsed.day || getToday(),
           gamePlaysDay: parsed.gamePlaysDay || parsed.gamePlayedDay || "",
@@ -882,7 +1063,7 @@
         };
       } catch (err) {
         return {
-          tasks: defaultTasks,
+          tasks: defaultTasks.map((task) => ({ ...task, icon: task.icon || "list" })),
           completed: {},
           day: getToday(),
           gamePlaysDay: "",
