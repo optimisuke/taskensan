@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f26b3a">
+  <meta name="theme-color" content="#8edb2f">
   <title>Tasken-san</title>
   <style>
     :root {
-      --bg-a: #f8e7a1;
-      --bg-b: #ffd3a5;
-      --bg-c: #f26b3a;
+      --bg-a: #e6fbd2;
+      --bg-b: #d2f2ff;
+      --bg-c: #8edb2f;
       --ink: #2a2a2a;
-      --panel: #fff7e6;
-      --panel-strong: #fff1c2;
-      --accent: #1daaa6;
-      --accent-2: #f26b3a;
+      --panel: #f6fff1;
+      --panel-strong: #e9ffe0;
+      --accent: #8edb2f;
+      --accent-2: #58c6ff;
       --good: #2fbf71;
-      --warn: #f4a261;
+      --warn: #7fd6ff;
       --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     }
 
@@ -28,8 +28,8 @@
       margin: 0;
       font-family: "Trebuchet MS", "Comic Sans MS", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
       color: var(--ink);
-      background: radial-gradient(circle at 20% 20%, #fff8d9 0, #fff8d9 25%, transparent 26%),
-        radial-gradient(circle at 80% 20%, #ffe8d0 0, #ffe8d0 18%, transparent 19%),
+      background: radial-gradient(circle at 18% 18%, #f4ffe8 0, #f4ffe8 26%, transparent 27%),
+        radial-gradient(circle at 82% 20%, #dff6ff 0, #dff6ff 20%, transparent 21%),
         linear-gradient(135deg, var(--bg-a), var(--bg-b));
       min-height: 100vh;
       overflow-x: hidden;
@@ -48,7 +48,7 @@
       gap: 16px;
       padding: 12px 16px;
       border-radius: 24px;
-      background: linear-gradient(120deg, #fff4d4, #ffe0c2);
+      background: linear-gradient(120deg, #f5ffe6, #d9f5ff);
       box-shadow: var(--shadow);
     }
 
@@ -62,15 +62,16 @@
       width: 52px;
       height: 52px;
       border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), #6bdad0);
+      background: transparent;
       display: grid;
       place-items: center;
-      color: #fff;
-      font-weight: 800;
-      font-size: 20px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
       box-shadow: 0 6px 14px rgba(29, 170, 166, 0.35);
+    }
+
+    .logo img {
+      width: 52px;
+      height: 52px;
+      display: block;
     }
 
     .brand h1 {
@@ -95,7 +96,7 @@
     }
 
     .nav button.active {
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--accent-2), var(--accent));
       color: #fff;
     }
 
@@ -183,14 +184,14 @@
       width: 100%;
       height: 18px;
       border-radius: 999px;
-      background: #f1e1c1;
+      background: #d9f3dd;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
       width: 0;
-      background: linear-gradient(90deg, var(--accent), #59cbd1);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
       transition: width 0.4s ease;
     }
 
@@ -226,14 +227,15 @@
       padding: 16px 18px;
       font-size: 20px;
       font-weight: 800;
-      background: var(--accent-2);
+      background: linear-gradient(135deg, var(--accent-2), var(--accent));
       color: #fff;
       cursor: pointer;
-      box-shadow: 0 10px 18px rgba(242, 107, 58, 0.35);
+      box-shadow: 0 10px 18px rgba(88, 198, 255, 0.35);
     }
 
     .primary-btn:disabled {
-      background: #d7a78e;
+      background: linear-gradient(135deg, #f1f1f1, #e4e4e4);
+      color: #9aa0a6;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -262,7 +264,7 @@
       font-size: 18px;
       padding: 6px 10px;
       border-radius: 12px;
-      border: 2px solid #f0d9b5;
+      border: 2px solid #cdeeff;
       width: 100%;
     }
 
@@ -277,7 +279,7 @@
       border-radius: 12px;
       padding: 8px 10px;
       font-size: 16px;
-      background: #ffd6c1;
+      background: #d7f4ff;
       cursor: pointer;
     }
 
@@ -292,7 +294,7 @@
       font-size: 18px;
       padding: 10px 12px;
       border-radius: 14px;
-      border: 2px solid #f0d9b5;
+      border: 2px solid #cdeeff;
     }
 
     .note {
@@ -337,16 +339,19 @@
       position: relative;
       height: 360px;
       border-radius: 24px;
-      background: linear-gradient(160deg, #c8f1f0, #fef3d8);
+      background: linear-gradient(160deg, #d5f5ff, #eaffd8);
       overflow: hidden;
-      border: 4px dashed #f2b28a;
+      border: 4px dashed #8bdcff;
+      touch-action: manipulation;
     }
 
     .santa {
       position: absolute;
-      left: 18px;
-      bottom: 12px;
+      left: 60px;
+      top: 70%;
       font-size: 52px;
+      transform: translate(-50%, -50%);
+      transition: left 0.2s ease, top 0.2s ease;
       pointer-events: none;
       filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.15));
     }
@@ -389,7 +394,7 @@
       padding: 12px 16px;
       font-size: 18px;
       font-weight: 700;
-      background: #ffd3a5;
+      background: #c9f3ff;
       cursor: pointer;
     }
 
@@ -444,15 +449,17 @@
   <div class="app">
     <header>
       <div class="brand">
-        <div class="logo">TS</div>
+        <div class="logo">
+          <img src="icon.svg" alt="Tasken-san" />
+        </div>
         <div>
           <h1>Tasken-san</h1>
           <div>きょうも がんばろう！</div>
         </div>
       </div>
       <nav class="nav">
-        <button class="active" data-view="home">きょう</button>
-        <button data-view="settings">せってい</button>
+        <button class="active" data-view="home">🗓️ きょう</button>
+        <button data-view="settings">⚙️ せってい</button>
       </nav>
     </header>
 
@@ -460,7 +467,7 @@
       <section id="view-home" class="view active">
         <div class="layout">
           <div class="panel">
-            <h2>きょうのタスク</h2>
+            <h2>📋 きょうのタスク</h2>
             <div id="taskList" class="task-list"></div>
             <div id="emptyTasks" class="empty-state" hidden>タスクがありません。せっていで ついかしてね。</div>
             <div class="progress">
@@ -472,14 +479,15 @@
           </div>
 
           <div class="panel">
-            <h2>ごほうび</h2>
+            <h2>🎁 ごほうび</h2>
             <div class="reward-box">
               <div class="reward-status">
                 <div id="rewardMessage" class="message">タスクを ぜんぶ おわらせよう！</div>
-                <button id="startGameBtn" class="primary-btn" disabled>ゲームをはじめる</button>
+                <button id="startGameBtn" class="primary-btn" disabled>🎮 ゲームをはじめる</button>
                 <div id="rewardNote" class="mini-note">10びょうで プレゼントを あつめよう</div>
               </div>
               <div id="bestScore" class="mini-note">さいこう: 0</div>
+              <div id="playsLeft" class="mini-note">きょうのこり: 3かい</div>
               <div class="mini-note">きょうのタスクを ぜんぶ できたら あそべるよ</div>
             </div>
           </div>
@@ -488,11 +496,11 @@
 
       <section id="view-settings" class="view">
         <div class="panel">
-          <h2>タスクのせってい</h2>
+          <h2>🛠️ タスクのせってい</h2>
           <div id="settingsList" class="settings-list"></div>
           <div class="add-task">
             <input id="newTaskName" type="text" placeholder="あたらしいタスク">
-            <button id="addTaskBtn" class="secondary-btn">ついか</button>
+            <button id="addTaskBtn" class="secondary-btn">➕ ついか</button>
           </div>
           <div class="note">※ タスクは まいにち リセットされます</div>
         </div>
@@ -533,6 +541,7 @@
     const rewardMessageEl = document.getElementById("rewardMessage");
     const rewardNoteEl = document.getElementById("rewardNote");
     const bestScoreEl = document.getElementById("bestScore");
+    const playsLeftEl = document.getElementById("playsLeft");
     const emptyTasksEl = document.getElementById("emptyTasks");
     const overlayEl = document.getElementById("gameOverlay");
     const gameAreaEl = document.getElementById("gameArea");
@@ -546,6 +555,7 @@
     let spawnTimer = null;
     let currentScore = 0;
     let gameFinished = false;
+    let santaEl = null;
 
     setupNavigation();
     render();
@@ -569,6 +579,12 @@
       } else {
         endGame(true);
       }
+    });
+
+    gameAreaEl.addEventListener("pointerdown", (event) => {
+      if (!overlayEl.classList.contains("active")) return;
+      if (!santaEl) return;
+      moveSanta(event.clientX, event.clientY);
     });
 
     function setupNavigation() {
@@ -676,17 +692,21 @@
       const done = activeTasks.filter((task) => state.completed[task.id]).length;
       const allDone = total > 0 && done === total;
       const today = getToday();
-      const playedToday = state.gamePlayedDay === today;
+      const playedToday = state.gamePlaysDay === today ? state.gamePlaysCount : 0;
+      const maxPlays = 3;
+      const remainingPlays = Math.max(0, maxPlays - playedToday);
+      const canPlayMore = remainingPlays > 0;
       bestScoreEl.textContent = `さいこう: ${state.bestScore}`;
+      playsLeftEl.textContent = `きょうのこり: ${remainingPlays}かい`;
 
-      if (allDone && !playedToday) {
+      if (allDone && canPlayMore) {
         rewardMessageEl.textContent = "すごい！ ごほうび かいきん！";
         startGameBtn.disabled = false;
         rewardNoteEl.textContent = "10びょうで プレゼントを あつめよう";
         return;
       }
 
-      if (playedToday) {
+      if (!canPlayMore && allDone) {
         rewardMessageEl.textContent = "きょうの ごほうびは おしまい";
         startGameBtn.disabled = true;
         rewardNoteEl.textContent = "また あした がんばろう";
@@ -705,10 +725,24 @@
       rewardNoteEl.textContent = "";
     }
 
+    function moveSanta(clientX, clientY) {
+      const rect = gameAreaEl.getBoundingClientRect();
+      const size = 52;
+      const half = size / 2;
+      const x = Math.min(rect.width - half, Math.max(half, clientX - rect.left));
+      const y = Math.min(rect.height - half, Math.max(half, clientY - rect.top));
+      santaEl.style.left = `${x}px`;
+      santaEl.style.top = `${y}px`;
+    }
+
     function startGame() {
       if (startGameBtn.disabled) return;
       overlayEl.classList.add("active");
-      gameAreaEl.innerHTML = "<div class=\"santa\">🎅</div>";
+      gameAreaEl.innerHTML = "";
+      santaEl = document.createElement("div");
+      santaEl.className = "santa";
+      santaEl.textContent = "🎅";
+      gameAreaEl.appendChild(santaEl);
       let timeLeft = 10;
       currentScore = 0;
       gameFinished = false;
@@ -754,7 +788,9 @@
       gameTimer = null;
       spawnTimer = null;
       if (!byExit) {
-        state.gamePlayedDay = getToday();
+        const today = getToday();
+        state.gamePlaysDay = today;
+        state.gamePlaysCount = (state.gamePlaysCount || 0) + 1;
         gameFinished = true;
         if (currentScore > state.bestScore) {
           state.bestScore = currentScore;
@@ -779,7 +815,8 @@
           tasks: defaultTasks,
           completed: {},
           day: getToday(),
-          gamePlayedDay: "",
+          gamePlaysDay: "",
+          gamePlaysCount: 0,
           bestScore: 0
         };
       }
@@ -789,7 +826,8 @@
           tasks: Array.isArray(parsed.tasks) && parsed.tasks.length ? parsed.tasks : defaultTasks,
           completed: parsed.completed || {},
           day: parsed.day || getToday(),
-          gamePlayedDay: parsed.gamePlayedDay || "",
+          gamePlaysDay: parsed.gamePlaysDay || parsed.gamePlayedDay || "",
+          gamePlaysCount: Number.isFinite(parsed.gamePlaysCount) ? parsed.gamePlaysCount : 0,
           bestScore: Number.isFinite(parsed.bestScore) ? parsed.bestScore : 0
         };
       } catch (err) {
@@ -797,7 +835,8 @@
           tasks: defaultTasks,
           completed: {},
           day: getToday(),
-          gamePlayedDay: "",
+          gamePlaysDay: "",
+          gamePlaysCount: 0,
           bestScore: 0
         };
       }
@@ -812,7 +851,8 @@
       if (nextState.day !== today) {
         nextState.day = today;
         nextState.completed = {};
-        nextState.gamePlayedDay = "";
+        nextState.gamePlaysDay = "";
+        nextState.gamePlaysCount = 0;
       }
     }
 
@@ -846,8 +886,8 @@
         short_name: "Tasken",
         start_url: ".",
         display: "standalone",
-        background_color: "#fff1c2",
-        theme_color: "#f26b3a",
+        background_color: "#e9ffe0",
+        theme_color: "#8edb2f",
         icons: [
           { src: icon192, sizes: "192x192", type: "image/svg+xml" },
           { src: icon512, sizes: "512x512", type: "image/svg+xml" }
