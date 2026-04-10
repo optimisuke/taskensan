@@ -1,1368 +1,1625 @@
 <!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#8edb2f">
-  <link rel="manifest" href="manifest.json">
-  <title>Tasken-san</title>
-  <style>
-    :root {
-      --bg-a: #e6fbd2;
-      --bg-b: #d2f2ff;
-      --bg-c: #8edb2f;
-      --ink: #2a2a2a;
-      --panel: #ffffff;
-      --panel-strong: #f5faff;
-      --accent: #8edb2f;
-      --accent-2: #58c6ff;
-      --good: #2fbf71;
-      --warn: #7fd6ff;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Hiragino Maru Gothic ProN", "M PLUS Rounded 1c", "Trebuchet MS", "Meiryo", sans-serif;
-      color: var(--ink);
-      background: #ffffff;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ccircle cx='6' cy='8' r='2' fill='%23dff3ff'/%3E%3Ccircle cx='30' cy='18' r='2' fill='%23e6ffd8'/%3E%3Ccircle cx='20' cy='36' r='2' fill='%23dff3ff'/%3E%3C/svg%3E");
-      background-repeat: repeat;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .app {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 20px 24px 40px;
-    }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 12px 16px;
-      border-radius: 24px;
-      background: #ffffff;
-      border: 3px solid #e6f7ff;
-      box-shadow: 0 8px 20px rgba(88, 198, 255, 0.15);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      background: transparent;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 6px 14px rgba(88, 198, 255, 0.35);
-    }
-
-    .logo img {
-      width: 52px;
-      height: 52px;
-      display: block;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .nav {
-      display: flex;
-      gap: 12px;
-    }
-
-    .nav button {
-      border: none;
-      border-radius: 18px;
-      padding: 12px 18px;
-      font-size: 18px;
-      font-weight: 700;
-      background: #ffffff;
-      border: 2px solid #e0f1ff;
-      box-shadow: 0 6px 12px rgba(88, 198, 255, 0.12);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav button.active {
-      background: linear-gradient(135deg, var(--accent-2), var(--accent));
-      color: #fff;
-    }
-
-    main {
-      margin-top: 24px;
-    }
-
-    .view {
-      display: none;
-      animation: fadeUp 0.6s ease both;
-    }
-
-    .view.active {
-      display: block;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 20px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border-radius: 26px;
-      padding: 20px 24px;
-      border: 3px solid #e6f7ff;
-      box-shadow: 0 8px 20px rgba(88, 198, 255, 0.12);
-    }
-
-    .panel h2 {
-      margin: 0 0 12px;
-      font-size: 24px;
-    }
-
-    .with-icon {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .icon {
-      width: 20px;
-      height: 20px;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-
-    .icon-lg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .task-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .task-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 14px 16px;
-      background: #ffffff;
-      border-radius: 18px;
-      border: 3px solid #e6f7ff;
-      font-size: 20px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease, border 0.2s ease;
-    }
-
-    .task-main {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .task-icon {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #1f6f8b;
-    }
-
-    .task-icon svg {
-      width: 24px;
-      height: 24px;
-      display: block;
-    }
-
-    .task-card.completed {
-      border-color: var(--good);
-      background: #e9fff2;
-    }
-
-    .task-card:active {
-      transform: scale(0.98);
-    }
-
-    .task-check {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background: #f5fbff;
-      display: grid;
-      place-items: center;
-      font-size: 26px;
-      color: #fff;
-    }
-
-    .task-card.completed .task-check {
-      background: var(--good);
-      color: #fff;
-    }
-
-    .progress {
-      margin-top: 18px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 22px;
-      border-radius: 999px;
-      background: #d9f3dd;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      transition: width 0.4s ease;
-    }
-
-    .progress-text {
-      margin-top: 8px;
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    .reward-box {
-      display: grid;
-      gap: 16px;
-      align-items: start;
-    }
-
-    .mascot {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 18px;
-      padding: 14px 16px;
-      border-radius: 22px;
-      background: #ffffff;
-      border: 3px solid #e6f7ff;
-      box-shadow: 0 8px 20px rgba(88, 198, 255, 0.12);
-    }
-
-    .mascot img {
-      width: 64px;
-      height: 64px;
-      display: block;
-    }
-
-    .speech {
-      position: relative;
-      padding: 12px 16px;
-      border-radius: 16px;
-      background: #f7fbff;
-      border: 2px dashed #cfeeff;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 1.4;
-    }
-
-    .speech::before {
-      content: "";
-      position: absolute;
-      left: -10px;
-      top: 18px;
-      width: 0;
-      height: 0;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-right: 10px solid #cfeeff;
-    }
-
-    .speech::after {
-      content: "";
-      position: absolute;
-      left: -7px;
-      top: 18px;
-      width: 0;
-      height: 0;
-      border-top: 7px solid transparent;
-      border-bottom: 7px solid transparent;
-      border-right: 9px solid #f7fbff;
-    }
-
-    .reward-status {
-      background: var(--panel-strong);
-      border-radius: 20px;
-      padding: 16px;
-      text-align: center;
-      display: grid;
-      gap: 12px;
-      border: 2px dashed #cfeeff;
-    }
-
-    .reward-status .message {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .primary-btn {
-      border: none;
-      border-radius: 18px;
-      padding: 16px 18px;
-      font-size: 21px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--accent-2), var(--accent));
-      color: #fff;
-      cursor: pointer;
-      box-shadow: 0 10px 18px rgba(88, 198, 255, 0.35);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .primary-btn::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(120deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0));
-      opacity: 0.7;
-      transform: translateX(-40%);
-      pointer-events: none;
-    }
-
-    .primary-btn:active {
-      transform: scale(0.98);
-      box-shadow: 0 6px 12px rgba(88, 198, 255, 0.28);
-    }
-
-    .primary-btn:disabled {
-      background: linear-gradient(135deg, #f1f1f1, #e4e4e4);
-      color: #9aa0a6;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-
-    .mini-note {
-      font-size: 16px;
-      text-align: center;
-    }
-
-    .stat-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-weight: 800;
-      font-size: 17px;
-      letter-spacing: 0.2px;
-      border: 2px solid transparent;
-      background: #fff;
-      box-shadow: 0 6px 14px rgba(88, 198, 255, 0.18);
-    }
-
-    .stat-pill .label {
-      opacity: 0.7;
-      font-weight: 700;
-    }
-
-    .stat-pill.score {
-      background: linear-gradient(135deg, #eaffd8, #d8f3ff);
-      border-color: #8edb2f;
-      color: #2b7c46;
-    }
-
-    .stat-pill.plays {
-      background: linear-gradient(135deg, #f3f8ff, #e9f4ff);
-      border-color: #58c6ff;
-      color: #1c6aa8;
-    }
-
-    .settings-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .settings-item {
-      display: grid;
-      gap: 10px;
-      background: #fff;
-      border-radius: 16px;
-      padding: 10px 12px;
-    }
-
-    .settings-main {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .settings-item input[type="text"] {
-      font-size: 18px;
-      padding: 6px 10px;
-      border-radius: 12px;
-      border: 2px solid #cdeeff;
-      width: 100%;
-    }
-
-    .icon-btn {
-      border: none;
-      border-radius: 12px;
-      padding: 8px 10px;
-      font-size: 16px;
-      background: #d7f4ff;
-      cursor: pointer;
-    }
-
-    .icon-picker {
-      display: grid;
-      grid-template-columns: repeat(9, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .icon-choice {
-      border: 2px solid transparent;
-      background: #f5fbff;
-      border-radius: 12px;
-      padding: 6px;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      color: #1c6aa8;
-    }
-
-    .icon-choice.active {
-      border-color: var(--accent);
-      background: #eaffd8;
-      color: #2b7c46;
-    }
-
-    .icon-choice svg {
-      width: 20px;
-      height: 20px;
-      display: block;
-    }
-
-    .add-task {
-      margin-top: 16px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-    }
-
-    .add-task input {
-      font-size: 18px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 2px solid #cdeeff;
-    }
-
-    .note {
-      margin-top: 16px;
-      font-size: 14px;
-      opacity: 0.8;
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(35, 31, 32, 0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 10;
-    }
-
-    .overlay.active {
-      display: flex;
-    }
-
-    .game-card {
-      background: #fff;
-      border-radius: 28px;
-      padding: 18px 20px 20px;
-      width: min(700px, 90vw);
-      box-shadow: var(--shadow);
-      display: grid;
-      gap: 12px;
-    }
-
-    .game-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .game-area {
-      position: relative;
-      height: 360px;
-      border-radius: 24px;
-      background: linear-gradient(160deg, #d5f5ff, #eaffd8);
-      overflow: hidden;
-      border: 4px dashed #8bdcff;
-      touch-action: manipulation;
-    }
-
-    .game-area::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), transparent 55%),
-        radial-gradient(circle at 70% 40%, rgba(255, 255, 255, 0.7), transparent 60%);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .santa {
-      position: absolute;
-      left: 60px;
-      top: 70%;
-      width: 64px;
-      height: 64px;
-      transform: translate(-50%, -50%);
-      transition: left 0.2s ease, top 0.2s ease;
-      pointer-events: none;
-      filter: drop-shadow(0 4px 2px rgba(0, 0, 0, 0.15));
-    }
-
-    .santa img {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .present {
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, #7fe7a8, #5bc4ff);
-      border-radius: 14px;
-      border: 4px solid #39b878;
-      box-shadow: 0 6px 0 rgba(39, 150, 95, 0.2);
-      animation: floaty 1.8s ease-in-out infinite;
-      touch-action: manipulation;
-    }
-
-    .present::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent 42%, #ffffff 42%, #ffffff 58%, transparent 58%);
-      border-radius: 10px;
-    }
-
-    .present::after {
-      content: "";
-      position: absolute;
-      width: 22px;
-      height: 22px;
-      background: #ffffff;
-      border-radius: 50%;
-      top: -14px;
-      left: 18px;
-      box-shadow: 0 0 0 3px #d1f2ff;
-    }
-
-    .secondary-btn {
-      border: none;
-      border-radius: 16px;
-      padding: 12px 16px;
-      font-size: 18px;
-      font-weight: 700;
-      background: #c9f3ff;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .game-btn {
-      width: 100%;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .empty-state {
-      text-align: center;
-      font-size: 18px;
-      padding: 16px;
-      background: #fff;
-      border-radius: 16px;
-    }
-
-    .game-result {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 800;
-      color: #2c9d66;
-      min-height: 24px;
-    }
-
-    .game-result.celebrate {
-      animation: pop 0.6s ease-out, glow 0.9s ease-out;
-    }
-
-    .game-area.celebrate {
-      animation: sparkle 0.9s ease-out;
-    }
-
-    .game-area.celebrate::after {
-      animation: flash 0.9s ease-out;
-    }
-
-    .confetti {
-      position: absolute;
-      top: -20px;
-      width: 8px;
-      height: 14px;
-      border-radius: 2px;
-      opacity: 0;
-      animation: confetti-fall 1.2s ease-out forwards;
-      pointer-events: none;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#8edb2f" />
+    <link rel="manifest" href="manifest.json" />
+    <title>Tasken-san</title>
+    <style>
+      :root {
+        --bg-a: #e6fbd2;
+        --bg-b: #d2f2ff;
+        --bg-c: #8edb2f;
+        --ink: #2a2a2a;
+        --panel: #ffffff;
+        --panel-strong: #f5faff;
+        --accent: #8edb2f;
+        --accent-2: #58c6ff;
+        --good: #2fbf71;
+        --warn: #7fd6ff;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
 
-    @keyframes floaty {
-      0%, 100% {
-        transform: translateY(0);
+      * {
+        box-sizing: border-box;
       }
-      50% {
-        transform: translateY(-6px);
-      }
-    }
 
-    @keyframes pop {
-      0% {
-        transform: scale(0.9);
-        opacity: 0.4;
+      body {
+        margin: 0;
+        font-family:
+          "Hiragino Maru Gothic ProN", "M PLUS Rounded 1c", "Trebuchet MS",
+          "Meiryo", sans-serif;
+        color: var(--ink);
+        background: #ffffff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ccircle cx='6' cy='8' r='2' fill='%23dff3ff'/%3E%3Ccircle cx='30' cy='18' r='2' fill='%23e6ffd8'/%3E%3Ccircle cx='20' cy='36' r='2' fill='%23dff3ff'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        min-height: 100vh;
+        overflow-x: hidden;
       }
-      60% {
-        transform: scale(1.08);
-        opacity: 1;
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
 
-    @keyframes glow {
-      0% {
-        text-shadow: 0 0 0 rgba(88, 198, 255, 0);
+      .app {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 24px 40px;
       }
-      60% {
-        text-shadow: 0 0 14px rgba(88, 198, 255, 0.6);
-      }
-      100% {
-        text-shadow: 0 0 0 rgba(88, 198, 255, 0);
-      }
-    }
 
-    @keyframes sparkle {
-      0% {
-        box-shadow: inset 0 0 0 rgba(88, 198, 255, 0);
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 16px;
+        border-radius: 24px;
+        background: #ffffff;
+        border: 3px solid #e6f7ff;
+        box-shadow: 0 8px 20px rgba(88, 198, 255, 0.15);
       }
-      50% {
-        box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.35);
-      }
-      100% {
-        box-shadow: inset 0 0 0 rgba(88, 198, 255, 0);
-      }
-    }
 
-    @keyframes flash {
-      0% {
-        opacity: 0;
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
-      40% {
-        opacity: 0.7;
-      }
-      100% {
-        opacity: 0;
-      }
-    }
 
-    @keyframes confetti-fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
+      .logo {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: transparent;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 6px 14px rgba(88, 198, 255, 0.35);
       }
-      20% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(340px) rotate(220deg);
-        opacity: 0;
-      }
-    }
 
-    @media (max-width: 900px) {
+      .logo img {
+        width: 52px;
+        height: 52px;
+        display: block;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: 28px;
+      }
+
+      .nav {
+        display: flex;
+        gap: 12px;
+      }
+
+      .nav button {
+        border: none;
+        border-radius: 18px;
+        padding: 12px 18px;
+        font-size: 18px;
+        font-weight: 700;
+        background: #ffffff;
+        border: 2px solid #e0f1ff;
+        box-shadow: 0 6px 12px rgba(88, 198, 255, 0.12);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav button.active {
+        background: linear-gradient(135deg, var(--accent-2), var(--accent));
+        color: #fff;
+      }
+
+      main {
+        margin-top: 24px;
+      }
+
+      .view {
+        display: none;
+        animation: fadeUp 0.6s ease both;
+      }
+
+      .view.active {
+        display: block;
+      }
+
       .layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 20px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border-radius: 26px;
+        padding: 20px 24px;
+        border: 3px solid #e6f7ff;
+        box-shadow: 0 8px 20px rgba(88, 198, 255, 0.12);
+      }
+
+      .panel h2 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      .with-icon {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+
+      .icon-lg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .task-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        background: #ffffff;
+        border-radius: 18px;
+        border: 3px solid #e6f7ff;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          border 0.2s ease;
+      }
+
+      .task-main {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .task-icon {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #1f6f8b;
+      }
+
+      .task-icon svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+
+      .task-card.completed {
+        border-color: var(--good);
+        background: #e9fff2;
+      }
+
+      .task-card:active {
+        transform: scale(0.98);
+      }
+
+      .task-check {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: #f5fbff;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        color: #fff;
+      }
+
+      .task-card.completed .task-check {
+        background: var(--good);
+        color: #fff;
+      }
+
+      .progress {
+        margin-top: 18px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 22px;
+        border-radius: 999px;
+        background: #d9f3dd;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        transition: width 0.4s ease;
+      }
+
+      .progress-text {
+        margin-top: 8px;
+        font-weight: 700;
+        font-size: 18px;
+      }
+
+      .reward-box {
+        display: grid;
+        gap: 16px;
+        align-items: start;
+      }
+
+      .mascot {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        border-radius: 22px;
+        background: #ffffff;
+        border: 3px solid #e6f7ff;
+        box-shadow: 0 8px 20px rgba(88, 198, 255, 0.12);
+      }
+
+      .mascot img {
+        width: 64px;
+        height: 64px;
+        display: block;
+      }
+
+      .speech {
+        position: relative;
+        padding: 12px 16px;
+        border-radius: 16px;
+        background: #f7fbff;
+        border: 2px dashed #cfeeff;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.4;
+      }
+
+      .speech::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 18px;
+        width: 0;
+        height: 0;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-right: 10px solid #cfeeff;
+      }
+
+      .speech::after {
+        content: "";
+        position: absolute;
+        left: -7px;
+        top: 18px;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-right: 9px solid #f7fbff;
+      }
+
+      .reward-status {
+        background: var(--panel-strong);
+        border-radius: 20px;
+        padding: 16px;
+        text-align: center;
+        display: grid;
+        gap: 12px;
+        border: 2px dashed #cfeeff;
+      }
+
+      .reward-status .message {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .primary-btn {
+        border: none;
+        border-radius: 18px;
+        padding: 16px 18px;
+        font-size: 21px;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent-2), var(--accent));
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 10px 18px rgba(88, 198, 255, 0.35);
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .primary-btn::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          120deg,
+          rgba(255, 255, 255, 0.45),
+          rgba(255, 255, 255, 0)
+        );
+        opacity: 0.7;
+        transform: translateX(-40%);
+        pointer-events: none;
+      }
+
+      .primary-btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 6px 12px rgba(88, 198, 255, 0.28);
+      }
+
+      .primary-btn:disabled {
+        background: linear-gradient(135deg, #f1f1f1, #e4e4e4);
+        color: #9aa0a6;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+      }
+
+      .mini-note {
+        font-size: 16px;
+        text-align: center;
+      }
+
+      .stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 17px;
+        letter-spacing: 0.2px;
+        border: 2px solid transparent;
+        background: #fff;
+        box-shadow: 0 6px 14px rgba(88, 198, 255, 0.18);
+      }
+
+      .stat-pill .label {
+        opacity: 0.7;
+        font-weight: 700;
+      }
+
+      .stat-pill.score {
+        background: linear-gradient(135deg, #eaffd8, #d8f3ff);
+        border-color: #8edb2f;
+        color: #2b7c46;
+      }
+
+      .stat-pill.plays {
+        background: linear-gradient(135deg, #f3f8ff, #e9f4ff);
+        border-color: #58c6ff;
+        color: #1c6aa8;
+      }
+
+      .settings-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .settings-item {
+        display: grid;
+        gap: 10px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 10px 12px;
+      }
+
+      .settings-main {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .settings-item input[type="text"] {
+        font-size: 18px;
+        padding: 6px 10px;
+        border-radius: 12px;
+        border: 2px solid #cdeeff;
+        width: 100%;
+      }
+
+      .icon-btn {
+        border: none;
+        border-radius: 12px;
+        padding: 8px 10px;
+        font-size: 16px;
+        background: #d7f4ff;
+        cursor: pointer;
+      }
+
+      .icon-picker {
+        display: grid;
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .icon-choice {
+        border: 2px solid transparent;
+        background: #f5fbff;
+        border-radius: 12px;
+        padding: 6px;
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        color: #1c6aa8;
+      }
+
+      .icon-choice.active {
+        border-color: var(--accent);
+        background: #eaffd8;
+        color: #2b7c46;
+      }
+
+      .icon-choice svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
+
+      .add-task {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+      }
+
+      .add-task input {
+        font-size: 18px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 2px solid #cdeeff;
+      }
+
+      .note {
+        margin-top: 16px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(35, 31, 32, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        z-index: 10;
+      }
+
+      .overlay.active {
+        display: flex;
+      }
+
+      .game-card {
+        background: #fff;
+        border-radius: 28px;
+        padding: 18px 20px 20px;
+        width: min(700px, 90vw);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 12px;
+      }
+
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 20px;
+        font-weight: 800;
       }
 
       .game-area {
-        height: 280px;
+        position: relative;
+        height: 360px;
+        border-radius: 24px;
+        background: linear-gradient(
+          180deg,
+          #ffe8f0 0%,
+          #ffd6e8 50%,
+          #fff0f5 100%
+        );
+        overflow: hidden;
+        border: 4px dashed #ffb7c5;
+        touch-action: manipulation;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="logo">
-          <img src="icon.svg" alt="Tasken-san" />
-        </div>
-        <div>
-          <h1>Tasken-san</h1>
-          <div>きょうも がんばろう！</div>
-        </div>
-      </div>
-      <nav class="nav">
-        <button id="settingsToggleBtn" type="button">
-          <svg id="settingsToggleIcon" class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          <span id="settingsToggleLabel">せってい</span>
-        </button>
-      </nav>
-    </header>
 
-    <main>
-      <section id="view-home" class="view active">
-        <div class="layout">
-          <div class="panel">
-            <h2 class="with-icon">
-              <svg class="icon icon-lg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 5H3" />
-                <path d="M16 12H3" />
-                <path d="M11 19H3" />
-                <path d="m15 18 2 2 4-4" />
-              </svg>
-              きょうのタスク
-            </h2>
-            <div id="taskList" class="task-list"></div>
-            <div id="emptyTasks" class="empty-state" hidden>タスクがありません。せっていで ついかしてね。</div>
-            <div class="progress">
-              <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
-              </div>
-              <div id="progressText" class="progress-text">0 / 0</div>
-            </div>
+      .ground-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #ffb7c5, #ff8fa3, #ffb7c5);
+        border-radius: 0 0 20px 20px;
+        opacity: 0.6;
+      }
+
+      .game-area::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            circle at 30% 30%,
+            rgba(255, 255, 255, 0.9),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 70% 40%,
+            rgba(255, 255, 255, 0.7),
+            transparent 60%
+          );
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .petal {
+        position: absolute;
+        width: 18px;
+        height: 24px;
+        background: radial-gradient(ellipse at 40% 35%, #fff0f5, #ffb7c5);
+        border-radius: 50% 10% 50% 10%;
+        box-shadow: 0 1px 4px rgba(220, 80, 120, 0.2);
+        touch-action: manipulation;
+        cursor: pointer;
+        z-index: 1;
+      }
+
+      .secondary-btn {
+        border: none;
+        border-radius: 16px;
+        padding: 12px 16px;
+        font-size: 18px;
+        font-weight: 700;
+        background: #c9f3ff;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .game-btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .empty-state {
+        text-align: center;
+        font-size: 18px;
+        padding: 16px;
+        background: #fff;
+        border-radius: 16px;
+      }
+
+      .game-result {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 800;
+        color: #2c9d66;
+        min-height: 24px;
+      }
+
+      .game-result.celebrate {
+        animation:
+          pop 0.6s ease-out,
+          glow 0.9s ease-out;
+      }
+
+      .game-area.celebrate {
+        animation: sparkle 0.9s ease-out;
+      }
+
+      .game-area.celebrate::after {
+        animation: flash 0.9s ease-out;
+      }
+
+      .confetti {
+        position: absolute;
+        top: -20px;
+        width: 8px;
+        height: 14px;
+        border-radius: 2px;
+        opacity: 0;
+        animation: confetti-fall 1.2s ease-out forwards;
+        pointer-events: none;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes floaty {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      @keyframes petal-fall-a {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+        }
+        25% {
+          transform: translateY(90px) translateX(22px) rotate(90deg);
+        }
+        55% {
+          transform: translateY(210px) translateX(-14px) rotate(200deg);
+        }
+        80% {
+          transform: translateY(320px) translateX(18px) rotate(300deg);
+        }
+        100% {
+          transform: translateY(400px) translateX(-8px) rotate(360deg);
+        }
+      }
+
+      @keyframes petal-fall-b {
+        0% {
+          transform: translateY(0) translateX(0) rotate(20deg);
+        }
+        30% {
+          transform: translateY(105px) translateX(-25px) rotate(110deg);
+        }
+        60% {
+          transform: translateY(225px) translateX(16px) rotate(220deg);
+        }
+        85% {
+          transform: translateY(340px) translateX(-12px) rotate(320deg);
+        }
+        100% {
+          transform: translateY(400px) translateX(5px) rotate(380deg);
+        }
+      }
+
+      @keyframes petal-fall-c {
+        0% {
+          transform: translateY(0) translateX(0) rotate(45deg);
+        }
+        35% {
+          transform: translateY(115px) translateX(18px) rotate(145deg);
+        }
+        65% {
+          transform: translateY(245px) translateX(-20px) rotate(255deg);
+        }
+        90% {
+          transform: translateY(355px) translateX(14px) rotate(350deg);
+        }
+        100% {
+          transform: translateY(400px) translateX(-4px) rotate(400deg);
+        }
+      }
+
+      @keyframes pop {
+        0% {
+          transform: scale(0.9);
+          opacity: 0.4;
+        }
+        60% {
+          transform: scale(1.08);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes glow {
+        0% {
+          text-shadow: 0 0 0 rgba(88, 198, 255, 0);
+        }
+        60% {
+          text-shadow: 0 0 14px rgba(88, 198, 255, 0.6);
+        }
+        100% {
+          text-shadow: 0 0 0 rgba(88, 198, 255, 0);
+        }
+      }
+
+      @keyframes sparkle {
+        0% {
+          box-shadow: inset 0 0 0 rgba(88, 198, 255, 0);
+        }
+        50% {
+          box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.35);
+        }
+        100% {
+          box-shadow: inset 0 0 0 rgba(88, 198, 255, 0);
+        }
+      }
+
+      @keyframes flash {
+        0% {
+          opacity: 0;
+        }
+        40% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes confetti-fall {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 0;
+        }
+        20% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(340px) rotate(220deg);
+          opacity: 0;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .game-area {
+          height: 280px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div class="brand">
+          <div class="logo">
+            <img src="icon.svg" alt="Tasken-san" />
           </div>
-
-          <div class="panel">
-            <h2 class="with-icon">
-              <svg class="icon icon-lg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="8" width="18" height="4" rx="1" />
-                <path d="M12 8v13" />
-                <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
-                <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" />
-              </svg>
-              ごほうび
-            </h2>
-            <div class="reward-box">
-              <div class="reward-status">
-                <div id="rewardMessage" class="message">タスクを ぜんぶ おわらせよう！</div>
-                <button id="startGameBtn" class="primary-btn" disabled>
-                  <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="6" x2="10" y1="11" y2="11" />
-                    <line x1="8" x2="8" y1="9" y2="13" />
-                    <line x1="15" x2="15.01" y1="12" y2="12" />
-                    <line x1="18" x2="18.01" y1="10" y2="10" />
-                    <path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z" />
-                  </svg>
-                  ゲームをはじめる
-                </button>
-              </div>
-              <div id="bestScore" class="mini-note stat-pill score"><span class="label">さいこう</span><span class="value">0</span></div>
-              <div id="playsLeft" class="mini-note stat-pill plays"><span class="label">きょうのこり</span><span class="value">3かい</span></div>
-              <div class="mini-note">きょうのタスクを ぜんぶ できたら あそべるよ</div>
-            </div>
+          <div>
+            <h1>Tasken-san</h1>
+            <div>きょうも がんばろう！</div>
           </div>
         </div>
-        <div class="mascot">
-          <img src="icon.svg" alt="Tasken-san" />
-          <div id="mascotSpeech" class="speech">きょうのタスク、いっしょにやろう！</div>
-        </div>
-      </section>
-
-      <section id="view-settings" class="view">
-        <div class="panel">
-          <h2 class="with-icon">
-            <svg class="icon icon-lg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z" />
+        <nav class="nav">
+          <button id="settingsToggleBtn" type="button">
+            <svg
+              id="settingsToggleIcon"
+              class="icon"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
+              />
+              <circle cx="12" cy="12" r="3" />
             </svg>
-            タスクのせってい
-          </h2>
-          <div id="settingsList" class="settings-list"></div>
-          <div class="add-task">
-            <input id="newTaskName" type="text" placeholder="あたらしいタスク">
-            <button id="addTaskBtn" class="secondary-btn">
-              <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-              ついか
-            </button>
+            <span id="settingsToggleLabel">せってい</span>
+          </button>
+        </nav>
+      </header>
+
+      <main>
+        <section id="view-home" class="view active">
+          <div class="layout">
+            <div class="panel">
+              <h2 class="with-icon">
+                <svg
+                  class="icon icon-lg"
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M16 5H3" />
+                  <path d="M16 12H3" />
+                  <path d="M11 19H3" />
+                  <path d="m15 18 2 2 4-4" />
+                </svg>
+                きょうのタスク
+              </h2>
+              <div id="taskList" class="task-list"></div>
+              <div id="emptyTasks" class="empty-state" hidden>
+                タスクがありません。せっていで ついかしてね。
+              </div>
+              <div class="progress">
+                <div class="progress-bar">
+                  <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div id="progressText" class="progress-text">0 / 0</div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h2 class="with-icon">
+                <svg
+                  class="icon icon-lg"
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="8" width="18" height="4" rx="1" />
+                  <path d="M12 8v13" />
+                  <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" />
+                  <path
+                    d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"
+                  />
+                </svg>
+                ごほうび
+              </h2>
+              <div class="reward-box">
+                <div class="reward-status">
+                  <div id="rewardMessage" class="message">
+                    タスクを ぜんぶ おわらせよう！
+                  </div>
+                  <button id="startGameBtn" class="primary-btn" disabled>
+                    <svg
+                      class="icon"
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <line x1="6" x2="10" y1="11" y2="11" />
+                      <line x1="8" x2="8" y1="9" y2="13" />
+                      <line x1="15" x2="15.01" y1="12" y2="12" />
+                      <line x1="18" x2="18.01" y1="10" y2="10" />
+                      <path
+                        d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"
+                      />
+                    </svg>
+                    ゲームをはじめる
+                  </button>
+                </div>
+                <div id="bestScore" class="mini-note stat-pill score">
+                  <span class="label">さいこう</span
+                  ><span class="value">0</span>
+                </div>
+                <div id="playsLeft" class="mini-note stat-pill plays">
+                  <span class="label">きょうのこり</span
+                  ><span class="value">3かい</span>
+                </div>
+                <div class="mini-note">
+                  きょうのタスクを ぜんぶ できたら あそべるよ
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="note">※ タスクは まいにち リセットされます</div>
-        </div>
-      </section>
-    </main>
-  </div>
+          <div class="mascot">
+            <img src="icon.svg" alt="Tasken-san" />
+            <div id="mascotSpeech" class="speech">
+              きょうのタスク、いっしょにやろう！
+            </div>
+          </div>
+        </section>
 
-  <div id="gameOverlay" class="overlay">
-    <div class="game-card">
-      <div class="game-header">
-        <div>のこり <span id="timeLeft">10</span> びょう</div>
-        <div>プレゼント <span id="score">0</span></div>
-      </div>
-      <div id="gameArea" class="game-area"></div>
-      <button id="gameStartBtn" class="primary-btn game-btn">
-        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="6 3 20 12 6 21 6 3" />
-        </svg>
-        スタート
-      </button>
-      <div id="gameHelp" class="mini-note">10びょうで プレゼントを あつめよう</div>
-      <div id="gameResult" class="game-result" aria-live="polite"></div>
-      <button id="exitGameBtn" class="secondary-btn game-btn">おしまい</button>
+        <section id="view-settings" class="view">
+          <div class="panel">
+            <h2 class="with-icon">
+              <svg
+                class="icon icon-lg"
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"
+                />
+              </svg>
+              タスクのせってい
+            </h2>
+            <div id="settingsList" class="settings-list"></div>
+            <div class="add-task">
+              <input
+                id="newTaskName"
+                type="text"
+                placeholder="あたらしいタスク"
+              />
+              <button id="addTaskBtn" class="secondary-btn">
+                <svg
+                  class="icon"
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="M12 5v14" />
+                </svg>
+                ついか
+              </button>
+            </div>
+            <div class="note">※ タスクは まいにち リセットされます</div>
+          </div>
+        </section>
+      </main>
     </div>
-  </div>
 
-  <script>
-    const STORAGE_KEY = "tasken-san-v1";
+    <div id="gameOverlay" class="overlay">
+      <div class="game-card">
+        <div class="game-header">
+          <div>のこり <span id="timeLeft">15</span> びょう</div>
+          <div>🌸 <span id="score">0</span></div>
+        </div>
+        <div id="gameArea" class="game-area"></div>
+        <button id="gameStartBtn" class="primary-btn game-btn">
+          <svg
+            class="icon"
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon points="6 3 20 12 6 21 6 3" />
+          </svg>
+          スタート
+        </button>
+        <div id="gameHelp" class="mini-note">
+          はなびらを タッチして あつめよう！ じめんに おちたら きえちゃう
+        </div>
+        <div id="gameResult" class="game-result" aria-live="polite"></div>
+        <button id="exitGameBtn" class="secondary-btn game-btn">
+          おしまい
+        </button>
+      </div>
+    </div>
 
-    const defaultTasks = [
-      { id: "tidy", name: "かたづけ", icon: "home" },
-      { id: "homework", name: "しゅくだい", icon: "book" },
-      { id: "help", name: "おてつだい", icon: "hand-heart" }
-    ];
+    <script>
+      const STORAGE_KEY = "tasken-san-v2";
 
-    const iconSvgs = {
-      calendar: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>`,
-      list: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5H3"/><path d="M16 12H3"/><path d="M11 19H3"/><path d="m15 18 2 2 4-4"/></svg>`,
-      book: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
-      home: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg>`,
-      "hand-heart": `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 14h1.5a2.5 2.5 0 0 0 0-5H12"/><path d="M12 9h-.5a2.5 2.5 0 0 0 0 5H13"/><path d="M8 17.5a4 4 0 0 0 4 4H18a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/><path d="M7 12H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h7"/><path d="M16.5 3.5a2.5 2.5 0 0 0-3.5 0L12 4.5l-1-1a2.5 2.5 0 0 0-3.5 3.5l4.5 4.5 4.5-4.5a2.5 2.5 0 0 0 0-3.5z"/></svg>`,
-      sparkles: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>`,
-      sun: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-      star: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.3 2.6 13.5 8l5.8.5-4.4 3.7L16.8 18l-5.5-3.4L5.8 18l1.9-5.8L3.3 8.5 9.1 8z"/></svg>`,
-      gift: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>`,
-      gamepad: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>`
-    };
+      const defaultTasks = [
+        { id: "study", name: "べんきょう", icon: "book" },
+        { id: "tidy", name: "かたづけ", icon: "home" },
+        { id: "exercise", name: "うんどう", icon: "run" },
+      ];
 
-    const iconOptions = [
-      { id: "list", label: "チェック" },
-      { id: "book", label: "ほん" },
-      { id: "home", label: "おうち" },
-      { id: "hand-heart", label: "おてつだい" },
-      { id: "calendar", label: "きょう" },
-      { id: "gift", label: "ごほうび" },
-      { id: "gamepad", label: "ゲーム" },
-      { id: "star", label: "ほし" },
-      { id: "sun", label: "たいよう" }
-    ];
+      const iconSvgs = {
+        calendar: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>`,
+        list: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5H3"/><path d="M16 12H3"/><path d="M11 19H3"/><path d="m15 18 2 2 4-4"/></svg>`,
+        book: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5V4.5A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+        home: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7"/><path d="M9 22V12h6v10"/></svg>`,
+        "hand-heart": `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 14h1.5a2.5 2.5 0 0 0 0-5H12"/><path d="M12 9h-.5a2.5 2.5 0 0 0 0 5H13"/><path d="M8 17.5a4 4 0 0 0 4 4H18a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1"/><path d="M7 12H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h7"/><path d="M16.5 3.5a2.5 2.5 0 0 0-3.5 0L12 4.5l-1-1a2.5 2.5 0 0 0-3.5 3.5l4.5 4.5 4.5-4.5a2.5 2.5 0 0 0 0-3.5z"/></svg>`,
+        sparkles: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>`,
+        sun: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
+        star: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.3 2.6 13.5 8l5.8.5-4.4 3.7L16.8 18l-5.5-3.4L5.8 18l1.9-5.8L3.3 8.5 9.1 8z"/></svg>`,
+        gift: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>`,
+        gamepad: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>`,
+        run: `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="1"/><path d="M7 21l3-6"/><path d="M16 21l-2-7-3 2-3-4"/><path d="M8 11l2-5 5 2 2 4"/></svg>`,
+      };
 
-    function getIconSvg(iconId) {
-      return iconSvgs[iconId] || iconSvgs.list;
-    }
+      const iconOptions = [
+        { id: "list", label: "チェック" },
+        { id: "book", label: "ほん" },
+        { id: "home", label: "おうち" },
+        { id: "run", label: "はしる" },
+        { id: "hand-heart", label: "おてつだい" },
+        { id: "calendar", label: "きょう" },
+        { id: "gift", label: "ごほうび" },
+        { id: "gamepad", label: "ゲーム" },
+        { id: "star", label: "ほし" },
+        { id: "sun", label: "たいよう" },
+      ];
 
-    const state = loadState();
-    ensureToday(state);
-    saveState(state);
-
-    const taskListEl = document.getElementById("taskList");
-    const settingsToggleBtn = document.getElementById("settingsToggleBtn");
-    const settingsToggleIcon = document.getElementById("settingsToggleIcon");
-    const settingsToggleLabel = document.getElementById("settingsToggleLabel");
-    const settingsListEl = document.getElementById("settingsList");
-    const progressFillEl = document.getElementById("progressFill");
-    const progressTextEl = document.getElementById("progressText");
-    const startGameBtn = document.getElementById("startGameBtn");
-    const rewardMessageEl = document.getElementById("rewardMessage");
-    const bestScoreEl = document.getElementById("bestScore");
-    const playsLeftEl = document.getElementById("playsLeft");
-    const mascotSpeechEl = document.getElementById("mascotSpeech");
-    const emptyTasksEl = document.getElementById("emptyTasks");
-    const overlayEl = document.getElementById("gameOverlay");
-    const gameAreaEl = document.getElementById("gameArea");
-    const timeLeftEl = document.getElementById("timeLeft");
-    const scoreEl = document.getElementById("score");
-    const gameResultEl = document.getElementById("gameResult");
-    const gameStartBtn = document.getElementById("gameStartBtn");
-    const gameHelpEl = document.getElementById("gameHelp");
-    const exitGameBtn = document.getElementById("exitGameBtn");
-    const newTaskInput = document.getElementById("newTaskName");
-
-    let gameTimer = null;
-    let spawnTimer = null;
-    let currentScore = 0;
-    let gameFinished = false;
-    let santaEl = null;
-
-    setupNavigation();
-    render();
-
-    document.getElementById("addTaskBtn").addEventListener("click", () => {
-      const name = newTaskInput.value.trim();
-      if (!name) return;
-      state.tasks.push({ id: crypto.randomUUID(), name, icon: "list" });
-      newTaskInput.value = "";
-      saveState(state);
-      render();
-    });
-
-    startGameBtn.addEventListener("click", () => {
-      openGame();
-    });
-
-    gameStartBtn.addEventListener("click", () => {
-      startGame();
-    });
-
-    exitGameBtn.addEventListener("click", () => {
-      if (gameFinished) {
-        closeGame();
-      } else {
-        endGame(true);
+      function getIconSvg(iconId) {
+        return iconSvgs[iconId] || iconSvgs.list;
       }
-    });
 
-    gameAreaEl.addEventListener("pointerdown", (event) => {
-      if (!overlayEl.classList.contains("active")) return;
-      if (!santaEl) return;
-      moveSanta(event.clientX, event.clientY);
-    });
-
-    function setupNavigation() {
-      settingsToggleBtn.addEventListener("click", () => {
-        const isSettings = document.getElementById("view-settings").classList.contains("active");
-        if (isSettings) {
-          showView("home");
-        } else {
-          showView("settings");
-        }
-      });
-    }
-
-    function showView(view) {
-      document.querySelectorAll(".view").forEach((section) => {
-        section.classList.toggle("active", section.id === `view-${view}`);
-      });
-
-      const isSettings = view === "settings";
-      settingsToggleBtn.classList.toggle("active", isSettings);
-      settingsToggleLabel.textContent = isSettings ? "ほぞん" : "せってい";
-      settingsToggleIcon.innerHTML = isSettings
-        ? '<path d="M17 21H7a2 2 0 0 1-2-2V7l5-5h7a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2z"/><path d="M7 21v-7h10v7"/><path d="M7 7h8"/>'
-        : '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>'
-        ;
-    }
-
-    function render() {
+      const state = loadState();
       ensureToday(state);
-      renderTasks();
-      renderSettings();
-      updateProgress();
-      updateReward();
-      updateMascot();
-      const activeView = document.querySelector(".view.active");
-      if (activeView && activeView.id) {
-        showView(activeView.id.replace("view-", ""));
-      }
-    }
+      saveState(state);
 
-    function renderTasks() {
-      taskListEl.innerHTML = "";
-      const activeTasks = state.tasks;
-      emptyTasksEl.hidden = activeTasks.length !== 0;
+      const taskListEl = document.getElementById("taskList");
+      const settingsToggleBtn = document.getElementById("settingsToggleBtn");
+      const settingsToggleIcon = document.getElementById("settingsToggleIcon");
+      const settingsToggleLabel = document.getElementById(
+        "settingsToggleLabel",
+      );
+      const settingsListEl = document.getElementById("settingsList");
+      const progressFillEl = document.getElementById("progressFill");
+      const progressTextEl = document.getElementById("progressText");
+      const startGameBtn = document.getElementById("startGameBtn");
+      const rewardMessageEl = document.getElementById("rewardMessage");
+      const bestScoreEl = document.getElementById("bestScore");
+      const playsLeftEl = document.getElementById("playsLeft");
+      const mascotSpeechEl = document.getElementById("mascotSpeech");
+      const emptyTasksEl = document.getElementById("emptyTasks");
+      const overlayEl = document.getElementById("gameOverlay");
+      const gameAreaEl = document.getElementById("gameArea");
+      const timeLeftEl = document.getElementById("timeLeft");
+      const scoreEl = document.getElementById("score");
+      const gameResultEl = document.getElementById("gameResult");
+      const gameStartBtn = document.getElementById("gameStartBtn");
+      const gameHelpEl = document.getElementById("gameHelp");
+      const exitGameBtn = document.getElementById("exitGameBtn");
+      const newTaskInput = document.getElementById("newTaskName");
 
-      activeTasks.forEach((task) => {
-        const card = document.createElement("button");
-        card.type = "button";
-        card.className = "task-card";
-        card.setAttribute("aria-pressed", Boolean(state.completed[task.id]));
-        card.innerHTML = `<span class="task-main"><span class="task-icon">${getIconSvg(task.icon)}</span><span>${task.name}</span></span><span class="task-check">✓</span>`;
-        if (state.completed[task.id]) {
-          card.classList.add("completed");
-        }
-        card.addEventListener("click", () => {
-          state.completed[task.id] = !state.completed[task.id];
-          saveState(state);
-          render();
-        });
-        taskListEl.appendChild(card);
+      let gameTimer = null;
+      let spawnTimer = null;
+      let currentScore = 0;
+      let gameFinished = false;
+
+      setupNavigation();
+      render();
+
+      document.getElementById("addTaskBtn").addEventListener("click", () => {
+        const name = newTaskInput.value.trim();
+        if (!name) return;
+        state.tasks.push({ id: crypto.randomUUID(), name, icon: "list" });
+        newTaskInput.value = "";
+        saveState(state);
+        render();
       });
-    }
 
-    function renderSettings() {
-      settingsListEl.innerHTML = "";
-      state.tasks.forEach((task) => {
-        const row = document.createElement("div");
-        row.className = "settings-item";
+      startGameBtn.addEventListener("click", () => {
+        openGame();
+      });
 
-        const main = document.createElement("div");
-        main.className = "settings-main";
+      gameStartBtn.addEventListener("click", () => {
+        startGame();
+      });
 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = task.name;
-        input.addEventListener("change", () => {
-          const value = input.value.trim();
-          task.name = value || task.name;
-          input.value = task.name;
-          saveState(state);
-          render();
-        });
+      exitGameBtn.addEventListener("click", () => {
+        if (gameFinished) {
+          closeGame();
+        } else {
+          endGame(true);
+        }
+      });
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "icon-btn";
-        delBtn.textContent = "けす";
-        delBtn.addEventListener("click", () => {
-          state.tasks = state.tasks.filter((t) => t.id !== task.id);
-          delete state.completed[task.id];
-          saveState(state);
-          render();
-        });
+      gameAreaEl.addEventListener("pointerdown", () => {
+        // タップははなびら側で処理
+      });
 
-        main.appendChild(input);
-        main.appendChild(delBtn);
-
-        const picker = document.createElement("div");
-        picker.className = "icon-picker";
-        iconOptions.forEach((option) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "icon-choice";
-          btn.innerHTML = getIconSvg(option.id);
-          btn.title = option.label;
-          btn.setAttribute("aria-pressed", option.id === task.icon);
-          if (option.id === task.icon) {
-            btn.classList.add("active");
+      function setupNavigation() {
+        settingsToggleBtn.addEventListener("click", () => {
+          const isSettings = document
+            .getElementById("view-settings")
+            .classList.contains("active");
+          if (isSettings) {
+            showView("home");
+          } else {
+            showView("settings");
           }
-          btn.addEventListener("click", () => {
-            task.icon = option.id;
+        });
+      }
+
+      function showView(view) {
+        document.querySelectorAll(".view").forEach((section) => {
+          section.classList.toggle("active", section.id === `view-${view}`);
+        });
+
+        const isSettings = view === "settings";
+        settingsToggleBtn.classList.toggle("active", isSettings);
+        settingsToggleLabel.textContent = isSettings ? "ほぞん" : "せってい";
+        settingsToggleIcon.innerHTML = isSettings
+          ? '<path d="M17 21H7a2 2 0 0 1-2-2V7l5-5h7a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2z"/><path d="M7 21v-7h10v7"/><path d="M7 7h8"/>'
+          : '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>';
+      }
+
+      function render() {
+        ensureToday(state);
+        renderTasks();
+        renderSettings();
+        updateProgress();
+        updateReward();
+        updateMascot();
+        const activeView = document.querySelector(".view.active");
+        if (activeView && activeView.id) {
+          showView(activeView.id.replace("view-", ""));
+        }
+      }
+
+      function renderTasks() {
+        taskListEl.innerHTML = "";
+        const activeTasks = state.tasks;
+        emptyTasksEl.hidden = activeTasks.length !== 0;
+
+        activeTasks.forEach((task) => {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "task-card";
+          card.setAttribute("aria-pressed", Boolean(state.completed[task.id]));
+          card.innerHTML = `<span class="task-main"><span class="task-icon">${getIconSvg(task.icon)}</span><span>${task.name}</span></span><span class="task-check">✓</span>`;
+          if (state.completed[task.id]) {
+            card.classList.add("completed");
+          }
+          card.addEventListener("click", () => {
+            state.completed[task.id] = !state.completed[task.id];
             saveState(state);
             render();
           });
-          picker.appendChild(btn);
+          taskListEl.appendChild(card);
         });
-
-        row.appendChild(main);
-        row.appendChild(picker);
-        settingsListEl.appendChild(row);
-      });
-    }
-
-    function updateProgress() {
-      const activeTasks = state.tasks;
-      const total = activeTasks.length;
-      const done = activeTasks.filter((task) => state.completed[task.id]).length;
-      const ratio = total ? Math.round((done / total) * 100) : 0;
-      progressFillEl.style.width = `${ratio}%`;
-      progressTextEl.textContent = `${done} / ${total}`;
-    }
-
-    function updateReward() {
-      const activeTasks = state.tasks;
-      const total = activeTasks.length;
-      const done = activeTasks.filter((task) => state.completed[task.id]).length;
-      const allDone = total > 0 && done === total;
-      const today = getToday();
-      const playedToday = state.gamePlaysDay === today ? state.gamePlaysCount : 0;
-      const maxPlays = 3;
-      const remainingPlays = Math.max(0, maxPlays - playedToday);
-      const canPlayMore = remainingPlays > 0;
-      bestScoreEl.querySelector(".value").textContent = state.bestScore;
-      playsLeftEl.querySelector(".value").textContent = `${remainingPlays}かい`;
-      if (allDone && canPlayMore) {
-        rewardMessageEl.textContent = "すごい！ ごほうび かいきん！";
-        startGameBtn.disabled = false;
-        startGameBtn.hidden = false;
-        return;
       }
 
-      if (!canPlayMore && allDone) {
-        rewardMessageEl.textContent = "きょうの ごほうびは おしまい";
-        startGameBtn.disabled = true;
-        startGameBtn.hidden = true;
-        return;
+      function renderSettings() {
+        settingsListEl.innerHTML = "";
+        state.tasks.forEach((task) => {
+          const row = document.createElement("div");
+          row.className = "settings-item";
+
+          const main = document.createElement("div");
+          main.className = "settings-main";
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.value = task.name;
+          input.addEventListener("change", () => {
+            const value = input.value.trim();
+            task.name = value || task.name;
+            input.value = task.name;
+            saveState(state);
+            render();
+          });
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "icon-btn";
+          delBtn.textContent = "けす";
+          delBtn.addEventListener("click", () => {
+            state.tasks = state.tasks.filter((t) => t.id !== task.id);
+            delete state.completed[task.id];
+            saveState(state);
+            render();
+          });
+
+          main.appendChild(input);
+          main.appendChild(delBtn);
+
+          const picker = document.createElement("div");
+          picker.className = "icon-picker";
+          iconOptions.forEach((option) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "icon-choice";
+            btn.innerHTML = getIconSvg(option.id);
+            btn.title = option.label;
+            btn.setAttribute("aria-pressed", option.id === task.icon);
+            if (option.id === task.icon) {
+              btn.classList.add("active");
+            }
+            btn.addEventListener("click", () => {
+              task.icon = option.id;
+              saveState(state);
+              render();
+            });
+            picker.appendChild(btn);
+          });
+
+          row.appendChild(main);
+          row.appendChild(picker);
+          settingsListEl.appendChild(row);
+        });
       }
 
-      if (total === 0) {
-        rewardMessageEl.textContent = "せっていで タスクを ついかしてね";
-        startGameBtn.disabled = true;
-        startGameBtn.hidden = true;
-        return;
+      function updateProgress() {
+        const activeTasks = state.tasks;
+        const total = activeTasks.length;
+        const done = activeTasks.filter(
+          (task) => state.completed[task.id],
+        ).length;
+        const ratio = total ? Math.round((done / total) * 100) : 0;
+        progressFillEl.style.width = `${ratio}%`;
+        progressTextEl.textContent = `${done} / ${total}`;
       }
 
-      rewardMessageEl.textContent = "タスクを ぜんぶ おわらせよう！";
-      startGameBtn.disabled = true;
-      startGameBtn.hidden = true;
-    }
-
-    function updateMascot() {
-      const activeTasks = state.tasks;
-      const total = activeTasks.length;
-      const done = activeTasks.filter((task) => state.completed[task.id]).length;
-      const today = getToday();
-      const playedToday = state.gamePlaysDay === today ? state.gamePlaysCount : 0;
-      const remainingPlays = Math.max(0, 3 - playedToday);
-
-      if (total === 0) {
-        mascotSpeechEl.textContent = "タスクを ついかしてね！";
-        return;
-      }
-
-      if (done === 0) {
-        mascotSpeechEl.textContent = "はじめの 1つ を やってみよう！";
-        return;
-      }
-
-      if (done < total) {
-        mascotSpeechEl.textContent = `あと ${total - done}こ で クリアだよ！`;
-        return;
-      }
-
-      if (remainingPlays === 0) {
-        mascotSpeechEl.textContent = "きょうは ぜんぶ あそべたね！";
-        return;
-      }
-
-      mascotSpeechEl.textContent = `ゲームをはじめる を おしてね！（のこり ${remainingPlays}かい）`;
-    }
-
-    function moveSanta(clientX, clientY) {
-      const rect = gameAreaEl.getBoundingClientRect();
-      const size = 52;
-      const half = size / 2;
-      const x = Math.min(rect.width - half, Math.max(half, clientX - rect.left));
-      const y = Math.min(rect.height - half, Math.max(half, clientY - rect.top));
-      santaEl.style.left = `${x}px`;
-      santaEl.style.top = `${y}px`;
-    }
-
-    function triggerCelebrate() {
-      gameAreaEl.classList.remove("celebrate");
-      gameResultEl.classList.remove("celebrate");
-      void gameAreaEl.offsetWidth;
-      void gameResultEl.offsetWidth;
-      gameAreaEl.classList.add("celebrate");
-      gameResultEl.classList.add("celebrate");
-      spawnConfetti();
-    }
-
-    function spawnConfetti() {
-      const colors = ["#8edb2f", "#58c6ff", "#ffd166", "#ff8fa3", "#8bdcff"];
-      for (let i = 0; i < 18; i += 1) {
-        const piece = document.createElement("div");
-        piece.className = "confetti";
-        piece.style.left = `${Math.random() * 100}%`;
-        piece.style.background = colors[i % colors.length];
-        piece.style.animationDelay = `${Math.random() * 0.2}s`;
-        gameAreaEl.appendChild(piece);
-        piece.addEventListener("animationend", () => {
-          piece.remove();
-        }, { once: true });
-      }
-    }
-
-    function startGame() {
-      if (startGameBtn.disabled) return;
-      openGame();
-    }
-
-    function openGame() {
-      overlayEl.classList.add("active");
-      gameAreaEl.innerHTML = "";
-      santaEl = document.createElement("div");
-      santaEl.className = "santa";
-      santaEl.innerHTML = "<img src=\"santa.svg\" alt=\"サンタ\" />";
-      gameAreaEl.appendChild(santaEl);
-      gameAreaEl.classList.remove("celebrate");
-      gameResultEl.classList.remove("celebrate");
-      gameStartBtn.hidden = false;
-      gameStartBtn.disabled = false;
-      gameHelpEl.hidden = false;
-      timeLeftEl.textContent = "10";
-      scoreEl.textContent = "0";
-      gameResultEl.textContent = "";
-      exitGameBtn.textContent = "おしまい";
-    }
-
-    function startGame() {
-      let timeLeft = 10;
-      currentScore = 0;
-      gameFinished = false;
-      timeLeftEl.textContent = timeLeft;
-      scoreEl.textContent = currentScore;
-      gameResultEl.textContent = "";
-      exitGameBtn.textContent = "おしまい";
-      gameStartBtn.hidden = true;
-      gameStartBtn.disabled = true;
-      gameHelpEl.hidden = true;
-
-      const spawnPresent = () => {
-        const present = document.createElement("div");
-        present.className = "present";
-        const areaRect = gameAreaEl.getBoundingClientRect();
-        const size = 70;
-        const maxX = areaRect.width - size;
-        const maxY = areaRect.height - size;
-        present.style.left = `${Math.max(0, Math.random() * maxX)}px`;
-        present.style.top = `${Math.max(0, Math.random() * maxY)}px`;
-        present.addEventListener("pointerdown", () => {
-          if (gameFinished) return;
-          present.remove();
-          currentScore += 1;
-          scoreEl.textContent = currentScore;
-          spawnPresent();
-        }, { once: true });
-        gameAreaEl.appendChild(present);
-      };
-
-      spawnPresent();
-      spawnTimer = setInterval(spawnPresent, 900);
-
-      gameTimer = setInterval(() => {
-        timeLeft -= 1;
-        timeLeftEl.textContent = timeLeft;
-        if (timeLeft <= 0) {
-          endGame(false);
-        }
-      }, 1000);
-    }
-
-    function endGame(byExit) {
-      clearInterval(gameTimer);
-      clearInterval(spawnTimer);
-      gameTimer = null;
-      spawnTimer = null;
-      if (!byExit) {
+      function updateReward() {
+        const activeTasks = state.tasks;
+        const total = activeTasks.length;
+        const done = activeTasks.filter(
+          (task) => state.completed[task.id],
+        ).length;
+        const allDone = total > 0 && done === total;
         const today = getToday();
-        state.gamePlaysDay = today;
-        state.gamePlaysCount = (state.gamePlaysCount || 0) + 1;
-        gameFinished = true;
-        if (currentScore > state.bestScore) {
-          state.bestScore = currentScore;
+        const playedToday =
+          state.gamePlaysDay === today ? state.gamePlaysCount : 0;
+        const maxPlays = 3;
+        const remainingPlays = Math.max(0, maxPlays - playedToday);
+        const canPlayMore = remainingPlays > 0;
+        bestScoreEl.querySelector(".value").textContent = state.bestScore;
+        playsLeftEl.querySelector(".value").textContent =
+          `${remainingPlays}かい`;
+        if (allDone && canPlayMore) {
+          rewardMessageEl.textContent = "すごい！ ごほうび かいきん！";
+          startGameBtn.disabled = false;
+          startGameBtn.hidden = false;
+          return;
         }
-        gameResultEl.textContent = `スコア: ${currentScore}（さいこう: ${state.bestScore}）`;
-        exitGameBtn.textContent = "もどる";
-        triggerCelebrate();
-      } else {
-        closeGame();
+
+        if (!canPlayMore && allDone) {
+          rewardMessageEl.textContent = "きょうの ごほうびは おしまい";
+          startGameBtn.disabled = true;
+          startGameBtn.hidden = true;
+          return;
+        }
+
+        if (total === 0) {
+          rewardMessageEl.textContent = "せっていで タスクを ついかしてね";
+          startGameBtn.disabled = true;
+          startGameBtn.hidden = true;
+          return;
+        }
+
+        rewardMessageEl.textContent = "タスクを ぜんぶ おわらせよう！";
+        startGameBtn.disabled = true;
+        startGameBtn.hidden = true;
       }
-      saveState(state);
-      render();
-    }
 
-    function closeGame() {
-      overlayEl.classList.remove("active");
-    }
+      function updateMascot() {
+        const activeTasks = state.tasks;
+        const total = activeTasks.length;
+        const done = activeTasks.filter(
+          (task) => state.completed[task.id],
+        ).length;
+        const today = getToday();
+        const playedToday =
+          state.gamePlaysDay === today ? state.gamePlaysCount : 0;
+        const remainingPlays = Math.max(0, 3 - playedToday);
 
-    function loadState() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        return {
-          tasks: defaultTasks.map((task) => ({ ...task, icon: task.icon || "list" })),
-          completed: {},
-          day: getToday(),
-          gamePlaysDay: "",
-          gamePlaysCount: 0,
-          bestScore: 0
+        if (total === 0) {
+          mascotSpeechEl.textContent = "タスクを ついかしてね！";
+          return;
+        }
+
+        if (done === 0) {
+          mascotSpeechEl.textContent = "はじめの 1つ を やってみよう！";
+          return;
+        }
+
+        if (done < total) {
+          mascotSpeechEl.textContent = `あと ${total - done}こ で クリアだよ！`;
+          return;
+        }
+
+        if (remainingPlays === 0) {
+          mascotSpeechEl.textContent = "きょうは ぜんぶ あそべたね！";
+          return;
+        }
+
+        mascotSpeechEl.textContent = `ゲームをはじめる を おしてね！（のこり ${remainingPlays}かい）`;
+      }
+
+      function triggerCelebrate() {
+        gameAreaEl.classList.remove("celebrate");
+        gameResultEl.classList.remove("celebrate");
+        void gameAreaEl.offsetWidth;
+        void gameResultEl.offsetWidth;
+        gameAreaEl.classList.add("celebrate");
+        gameResultEl.classList.add("celebrate");
+        spawnConfetti();
+      }
+
+      function spawnConfetti() {
+        const colors = ["#8edb2f", "#58c6ff", "#ffd166", "#ff8fa3", "#8bdcff"];
+        for (let i = 0; i < 18; i += 1) {
+          const piece = document.createElement("div");
+          piece.className = "confetti";
+          piece.style.left = `${Math.random() * 100}%`;
+          piece.style.background = colors[i % colors.length];
+          piece.style.animationDelay = `${Math.random() * 0.2}s`;
+          gameAreaEl.appendChild(piece);
+          piece.addEventListener(
+            "animationend",
+            () => {
+              piece.remove();
+            },
+            { once: true },
+          );
+        }
+      }
+
+      function startGame() {
+        if (startGameBtn.disabled) return;
+        openGame();
+      }
+
+      // 枝先スポーン位置（viewBox 600×360 に対する比率）
+      const petalSpawnPoints = [
+        // 木1（左）
+        { xPct: 0.075, yPct: 0.542 },
+        { xPct: 0.233, yPct: 0.486 },
+        { xPct: 0.150, yPct: 0.347 },
+        // 木2（中央）
+        { xPct: 0.417, yPct: 0.500 },
+        { xPct: 0.587, yPct: 0.458 },
+        { xPct: 0.500, yPct: 0.300 },
+        // 木3（右）
+        { xPct: 0.770, yPct: 0.550 },
+        { xPct: 0.928, yPct: 0.500 },
+        { xPct: 0.850, yPct: 0.356 },
+      ];
+
+      const TREE_SVG = `<svg width="100%" height="100%" viewBox="0 0 600 360" preserveAspectRatio="none" style="position:absolute;inset:0;pointer-events:none;z-index:0;">
+  <!-- 木1（左） -->
+  <path d="M90,360 C88,320 92,280 90,240 C88,210 90,180 90,175" stroke="#7a4b2a" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M90,230 C75,215 58,202 45,195" stroke="#7a4b2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M90,215 C108,196 126,182 140,175" stroke="#7a4b2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M90,175 C88,158 90,140 90,125" stroke="#7a4b2a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="45" cy="195" r="26" fill="#ffb7c5" opacity="0.78"/>
+  <circle cx="45" cy="195" r="17" fill="#ffd0dd" opacity="0.68"/>
+  <circle cx="33" cy="185" r="13" fill="#ffccd8" opacity="0.60"/>
+  <circle cx="56" cy="186" r="12" fill="#ffb7c5" opacity="0.55"/>
+  <circle cx="140" cy="175" r="24" fill="#ffb7c5" opacity="0.78"/>
+  <circle cx="140" cy="175" r="16" fill="#ffd0dd" opacity="0.68"/>
+  <circle cx="129" cy="165" r="12" fill="#ffccd8" opacity="0.60"/>
+  <circle cx="151" cy="167" r="11" fill="#ffb7c5" opacity="0.55"/>
+  <circle cx="90" cy="125" r="28" fill="#ffb7c5" opacity="0.80"/>
+  <circle cx="90" cy="125" r="19" fill="#ffd0dd" opacity="0.70"/>
+  <circle cx="76" cy="114" r="15" fill="#ffccd8" opacity="0.62"/>
+  <circle cx="104" cy="116" r="14" fill="#ffb7c5" opacity="0.58"/>
+  <circle cx="90" cy="105" r="12" fill="#ffd0dd" opacity="0.55"/>
+  <!-- 木2（中央） -->
+  <path d="M300,360 C298,315 302,272 300,235 C298,200 300,170 300,162" stroke="#7a4b2a" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M300,220 C282,202 265,188 250,180" stroke="#7a4b2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M300,205 C320,186 337,172 352,165" stroke="#7a4b2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M300,162 C298,142 300,122 300,108" stroke="#7a4b2a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="250" cy="180" r="25" fill="#ffb7c5" opacity="0.78"/>
+  <circle cx="250" cy="180" r="17" fill="#ffd0dd" opacity="0.68"/>
+  <circle cx="238" cy="170" r="13" fill="#ffccd8" opacity="0.60"/>
+  <circle cx="262" cy="172" r="12" fill="#ffb7c5" opacity="0.55"/>
+  <circle cx="352" cy="165" r="24" fill="#ffb7c5" opacity="0.78"/>
+  <circle cx="352" cy="165" r="16" fill="#ffd0dd" opacity="0.68"/>
+  <circle cx="341" cy="155" r="12" fill="#ffccd8" opacity="0.60"/>
+  <circle cx="363" cy="157" r="11" fill="#ffb7c5" opacity="0.55"/>
+  <circle cx="300" cy="108" r="28" fill="#ffb7c5" opacity="0.80"/>
+  <circle cx="300" cy="108" r="19" fill="#ffd0dd" opacity="0.70"/>
+  <circle cx="286" cy="97" r="15" fill="#ffccd8" opacity="0.62"/>
+  <circle cx="314" cy="99" r="14" fill="#ffb7c5" opacity="0.58"/>
+  <circle cx="300" cy="88" r="12" fill="#ffd0dd" opacity="0.55"/>
+  <!-- 木3（右） -->
+  <path d="M510,360 C508,318 512,278 510,242 C508,212 510,186 510,180" stroke="#7a4b2a" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <path d="M510,238 C492,220 476,206 462,198" stroke="#7a4b2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M510,222 C528,203 544,188 557,180" stroke="#7a4b2a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M510,180 C508,160 510,140 510,128" stroke="#7a4b2a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="462" cy="198" r="25" fill="#ffb7c5" opacity="0.78"/>
+  <circle cx="462" cy="198" r="17" fill="#ffd0dd" opacity="0.68"/>
+  <circle cx="450" cy="188" r="13" fill="#ffccd8" opacity="0.60"/>
+  <circle cx="474" cy="190" r="12" fill="#ffb7c5" opacity="0.55"/>
+  <circle cx="557" cy="180" r="23" fill="#ffb7c5" opacity="0.78"/>
+  <circle cx="557" cy="180" r="15" fill="#ffd0dd" opacity="0.68"/>
+  <circle cx="547" cy="170" r="11" fill="#ffccd8" opacity="0.60"/>
+  <circle cx="510" cy="128" r="27" fill="#ffb7c5" opacity="0.80"/>
+  <circle cx="510" cy="128" r="18" fill="#ffd0dd" opacity="0.70"/>
+  <circle cx="496" cy="117" r="14" fill="#ffccd8" opacity="0.62"/>
+  <circle cx="524" cy="119" r="13" fill="#ffb7c5" opacity="0.58"/>
+  <circle cx="510" cy="109" r="11" fill="#ffd0dd" opacity="0.55"/>
+</svg>`;
+
+      function openGame() {
+        overlayEl.classList.add("active");
+        gameAreaEl.innerHTML = TREE_SVG + '<div class="ground-bar"></div>';
+        gameAreaEl.classList.remove("celebrate");
+        gameResultEl.classList.remove("celebrate");
+        gameStartBtn.hidden = false;
+        gameStartBtn.disabled = false;
+        gameHelpEl.hidden = false;
+        timeLeftEl.textContent = "15";
+        scoreEl.textContent = "0";
+        gameResultEl.textContent = "";
+        exitGameBtn.textContent = "おしまい";
+      }
+
+      function startGame() {
+        let timeLeft = 15;
+        currentScore = 0;
+        gameFinished = false;
+        timeLeftEl.textContent = timeLeft;
+        scoreEl.textContent = currentScore;
+        gameResultEl.textContent = "";
+        exitGameBtn.textContent = "おしまい";
+        gameStartBtn.hidden = true;
+        gameStartBtn.disabled = true;
+        gameHelpEl.hidden = true;
+
+        const variants = ["a", "b", "c"];
+
+        const spawnPetal = () => {
+          if (gameFinished) return;
+          const petal = document.createElement("div");
+          petal.className = "petal";
+          const areaRect = gameAreaEl.getBoundingClientRect();
+          // 枝先のスポーン位置からランダムに選ぶ（±12pxのばらつきを加える）
+          const sp = petalSpawnPoints[Math.floor(Math.random() * petalSpawnPoints.length)];
+          const ox = (Math.random() - 0.5) * 24;
+          const oy = (Math.random() - 0.5) * 16;
+          petal.style.left = `${sp.xPct * areaRect.width + ox}px`;
+          petal.style.top = `${sp.yPct * areaRect.height + oy}px`;
+          const v = variants[Math.floor(Math.random() * variants.length)];
+          const duration = 2.5 + Math.random() * 2;
+          petal.style.animation = `petal-fall-${v} ${duration}s linear forwards`;
+
+          petal.addEventListener(
+            "pointerdown",
+            (e) => {
+              if (gameFinished) return;
+              e.stopPropagation();
+              petal.remove();
+              currentScore += 1;
+              scoreEl.textContent = currentScore;
+            },
+            { once: true },
+          );
+
+          petal.addEventListener(
+            "animationend",
+            () => {
+              petal.remove();
+            },
+            { once: true },
+          );
+
+          gameAreaEl.appendChild(petal);
         };
+
+        for (let i = 0; i < 3; i++) spawnPetal();
+        spawnTimer = setInterval(spawnPetal, 650);
+
+        gameTimer = setInterval(() => {
+          timeLeft -= 1;
+          timeLeftEl.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            endGame(false);
+          }
+        }, 1000);
       }
-      try {
-        const parsed = JSON.parse(raw);
-        const tasks = Array.isArray(parsed.tasks) && parsed.tasks.length ? parsed.tasks : defaultTasks;
-        const normalizedTasks = tasks.map((task) => ({
-          id: task.id,
-          name: task.name,
-          icon: task.icon || "list"
-        }));
-        return {
-          tasks: normalizedTasks,
-          completed: parsed.completed || {},
-          day: parsed.day || getToday(),
-          gamePlaysDay: parsed.gamePlaysDay || parsed.gamePlayedDay || "",
-          gamePlaysCount: Number.isFinite(parsed.gamePlaysCount) ? parsed.gamePlaysCount : 0,
-          bestScore: Number.isFinite(parsed.bestScore) ? parsed.bestScore : 0
-        };
-      } catch (err) {
-        return {
-          tasks: defaultTasks.map((task) => ({ ...task, icon: task.icon || "list" })),
-          completed: {},
-          day: getToday(),
-          gamePlaysDay: "",
-          gamePlaysCount: 0,
-          bestScore: 0
-        };
+
+      function endGame(byExit) {
+        clearInterval(gameTimer);
+        clearInterval(spawnTimer);
+        gameTimer = null;
+        spawnTimer = null;
+        gameAreaEl.querySelectorAll(".petal").forEach((p) => p.remove());
+        if (!byExit) {
+          const today = getToday();
+          state.gamePlaysDay = today;
+          state.gamePlaysCount = (state.gamePlaysCount || 0) + 1;
+          gameFinished = true;
+          if (currentScore > state.bestScore) {
+            state.bestScore = currentScore;
+          }
+          gameResultEl.textContent = `スコア: ${currentScore}（さいこう: ${state.bestScore}）`;
+          exitGameBtn.textContent = "もどる";
+          triggerCelebrate();
+        } else {
+          closeGame();
+        }
+        saveState(state);
+        render();
       }
-    }
 
-    function saveState(nextState) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
-    }
-
-    function ensureToday(nextState) {
-      const today = getToday();
-      if (nextState.day !== today) {
-        nextState.day = today;
-        nextState.completed = {};
-        nextState.gamePlaysDay = "";
-        nextState.gamePlaysCount = 0;
+      function closeGame() {
+        overlayEl.classList.remove("active");
       }
-    }
 
-    function getToday() {
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      const d = String(now.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
+      function loadState() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          return {
+            tasks: defaultTasks.map((task) => ({
+              ...task,
+              icon: task.icon || "list",
+            })),
+            completed: {},
+            day: getToday(),
+            gamePlaysDay: "",
+            gamePlaysCount: 0,
+            bestScore: 0,
+          };
+        }
+        try {
+          const parsed = JSON.parse(raw);
+          const tasks =
+            Array.isArray(parsed.tasks) && parsed.tasks.length
+              ? parsed.tasks
+              : defaultTasks;
+          const normalizedTasks = tasks.map((task) => ({
+            id: task.id,
+            name: task.name,
+            icon: task.icon || "list",
+          }));
+          return {
+            tasks: normalizedTasks,
+            completed: parsed.completed || {},
+            day: parsed.day || getToday(),
+            gamePlaysDay: parsed.gamePlaysDay || parsed.gamePlayedDay || "",
+            gamePlaysCount: Number.isFinite(parsed.gamePlaysCount)
+              ? parsed.gamePlaysCount
+              : 0,
+            bestScore: Number.isFinite(parsed.bestScore) ? parsed.bestScore : 0,
+          };
+        } catch (err) {
+          return {
+            tasks: defaultTasks.map((task) => ({
+              ...task,
+              icon: task.icon || "list",
+            })),
+            completed: {},
+            day: getToday(),
+            gamePlaysDay: "",
+            gamePlaysCount: 0,
+            bestScore: 0,
+          };
+        }
+      }
 
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("sw.js").catch(() => {
-        // Service worker registration can fail in some file:// contexts.
-      });
-    }
-  </script>
-</body>
+      function saveState(nextState) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+      }
+
+      function ensureToday(nextState) {
+        const today = getToday();
+        if (nextState.day !== today) {
+          nextState.day = today;
+          nextState.completed = {};
+          nextState.gamePlaysDay = "";
+          nextState.gamePlaysCount = 0;
+        }
+      }
+
+      function getToday() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const d = String(now.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js").catch(() => {
+          // Service worker registration can fail in some file:// contexts.
+        });
+      }
+    </script>
+  </body>
 </html>
